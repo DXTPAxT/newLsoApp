@@ -20,8 +20,10 @@ function da(dai, luotdanhArr, sodai) {
       if (madanh[i].length === 4) hesoma = dai === "hn" ? 54 : 36;
       else if (madanh[i].length === 6) hesoma = dai === "hn" ? 54 * 3 : 36 * 3;
       else if (madanh[i].length === 8) hesoma = dai === "hn" ? 54 * 6 : 36 * 6;
-      else if (madanh[i].length === 10) hesoma = dai === "hn" ? 54 * 10 : 36 * 10;
-      else if (madanh[i].length === 12) hesoma = dai === "hn" ? 54 * 15 : 36 * 15;
+      else if (madanh[i].length === 10)
+        hesoma = dai === "hn" ? 54 * 10 : 36 * 10;
+      else if (madanh[i].length === 12)
+        hesoma = dai === "hn" ? 54 * 15 : 36 * 15;
       tongtien += hesoma;
     }
     return sodai * tongtien * hesodanh;
@@ -48,7 +50,8 @@ function dax(dai, luotdanhArr, sodai) {
     if (madanh[i].length === 4) hesoma = dai === "hn" ? 67.5 : 45;
     else if (madanh[i].length === 6) hesoma = dai === "hn" ? 67.5 * 3 : 45 * 3;
     else if (madanh[i].length === 8) hesoma = dai === "hn" ? 67.5 * 6 : 45 * 6;
-    else if (madanh[i].length === 10) hesoma = dai === "hn" ? 67.5 * 10 : 45 * 10;
+    else if (madanh[i].length === 10)
+      hesoma = dai === "hn" ? 67.5 * 10 : 45 * 10;
     tongtien += hesoma;
   }
   return sodai * tongtien * hesodanh;
@@ -79,11 +82,21 @@ function baodao(luotdanhArr, dai, sodai) {
     if (madanh[i] === "") continue;
     var sokitu = madanh[i].length;
     if (sokitu === 3) {
-      hesoma = new Set(madanh[i]).size === 3 ? (dai === "hn" ? 23 * 6 : 17 * 6) : (dai === "hn" ? 23 * 3 : 17 * 3);
+      hesoma =
+        new Set(madanh[i]).size === 3
+          ? dai === "hn"
+            ? 23 * 6
+            : 17 * 6
+          : dai === "hn"
+          ? 23 * 3
+          : 17 * 3;
     } else if (sokitu === 4) {
-      if (new Set(madanh[i]).size === 4) hesoma = dai === "hn" ? 20 * 24 : 16 * 24;
-      else if (new Set(madanh[i]).size === 3) hesoma = dai === "hn" ? 20 * 12 : 16 * 12;
-      else if (checkTwoPairs(madanh[i])) hesoma = dai === "hn" ? 20 * 6 : 16 * 6;
+      if (new Set(madanh[i]).size === 4)
+        hesoma = dai === "hn" ? 20 * 24 : 16 * 24;
+      else if (new Set(madanh[i]).size === 3)
+        hesoma = dai === "hn" ? 20 * 12 : 16 * 12;
+      else if (checkTwoPairs(madanh[i]))
+        hesoma = dai === "hn" ? 20 * 6 : 16 * 6;
       else hesoma = dai === "hn" ? 20 * 4 : 16 * 4;
     }
     tongtien += hesoma;
@@ -104,7 +117,14 @@ function xcdao(luotdanhArr, dai, sodai) {
   var tongtien = 0;
   for (let so of madanh) {
     if (so === "") continue;
-    let hesoma = new Set(so).size === 3 ? (dai === "hn" ? 4 * 6 : 2 * 6) : (dai === "hn" ? 4 * 3 : 2 * 3);
+    let hesoma =
+      new Set(so).size === 3
+        ? dai === "hn"
+          ? 4 * 6
+          : 2 * 6
+        : dai === "hn"
+        ? 4 * 3
+        : 2 * 3;
     tongtien += hesoma;
   }
   return sodai * tongtien * hesodanh;
@@ -141,20 +161,15 @@ export function tinhtongtien(dai, maDanh, cacKieuDanh, sodai) {
     danhSachSo.forEach((so) => {
       const luotdanhArr = [so, soTienStr];
 
-      if (
+      if (/^da\d*x$/.test(kieudanh)) {
+        tongtien += dax(dai, luotdanhArr, sodai);
+      } else if (
         kieudanh.includes("da") &&
         !kieudanh.includes("x") &&
         !kieudanh.includes("dao") &&
         !kieudanh.includes("dau")
       ) {
         tongtien += da(dai, luotdanhArr, sodai);
-      } else if (
-        kieudanh.includes("da") &&
-        kieudanh.includes("x") &&
-        !kieudanh.includes("dao") &&
-        !kieudanh.includes("dau")
-      ) {
-        tongtien += dax(dai, luotdanhArr, sodai);
       } else if (kieudanh.includes("b")) {
         tongtien += kieudanh.includes("dao")
           ? baodao(luotdanhArr, dai, sodai)

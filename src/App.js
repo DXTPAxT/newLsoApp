@@ -108,11 +108,20 @@ function App() {
           var luotdanhArr = luotdanh.split(
             new RegExp(substrings.join("|"), "g")
           );
-          // Tách phần madanh trước kiểu đánh
-          let madanh = luotdanh.split(
-            /(bdao|xdao|bao|da|dau|duoi|dui|dd|x|b)/
-          )[0];
-          let luotdanhPhanConLai = luotdanh.slice(madanh.length);
+          const kieuDanhPattern =
+            /(bdao|xdao|bao|dax|da\d*x?|da|dau|duoi|dui|dd|x|b)/;
+          const match = luotdanh.match(kieuDanhPattern);
+
+          let madanh = "";
+          let luotdanhPhanConLai = "";
+
+          if (match) {
+            const index = luotdanh.indexOf(match[0]);
+            madanh = luotdanh.substring(0, index);
+            luotdanhPhanConLai = luotdanh.substring(index);
+          } else {
+            madanh = luotdanh;
+          }
 
           // Xử lý trường hợp "keo" với start–end bất kỳ
           if (madanh.includes("keo")) {
@@ -134,7 +143,7 @@ function App() {
           }
 
           // Tách các kiểu đánh còn lại
-          const pattern = /(bdao|xdao|bao|da|dau|duoi|dui|dd|x|b)\d*[,\.]?\d*/g;
+          const pattern = /(bdao|xdao|bao|da|dau|duoi|dui|dd|x|b)\d*(x)?/g;
           const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
 
           //        thông báo treo máy
