@@ -1,38 +1,161 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.nhapdonGroup {
+  display: flex;
+  flex-direction: row;
+}
+
+.nhapdonbox {
+  width: 70%;
+  padding: 10px;
+}
+
+.nhapdonboxheader {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
 }
 
-.App-link {
-  color: #61dafb;
+.nhapdon {
+  width: 100px;
+  height: 24px;
+  margin-left: 10px;
+  font-size: 1.2rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.tinhtong {
+  width: 100px;
+  height: 30px;
+  text-align: center;
+  background-color: #009d9d;
+  color: #fff;
+  border-radius: 6px;
+  border: 1px solid #000;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.2rem;
+}
+
+.tinhtong:hover {
+  opacity: 90%;
+  scale: 1.01;
+}
+
+textarea {
+  margin-top: 10px;
+  margin-left: 10px;
+  width: 100%;
+  height: 400px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+}
+
+textarea:focus {
+  border-color: #66afe9;
+  outline: none;
+  box-shadow: 0 0 5px rgba(102, 175, 233, 0.5);
+}
+
+.tongbox {
+  width: 10%;
+  margin-left: 60px;
+}
+
+.tong {
+  margin-top: 10px;
+  font-size: 1.2rem;
+}
+
+.tongdon {
+  margin-top: 10px;
+  background-color: #e7e7e7;
+  width: 100px;
+  height: 30px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+
+.ketquasosoGroup {
+  display: flex;
+  margin-bottom: 100px;
+}
+
+.ketquasoso {
+  width: 200px;
+  height: 24px;
+  margin-left: 10px;
+}
+
+.ketquasosobox {
+  width: 90%;
+  padding: 10px;
+  border-left: 1px solid;
+}
+
+.ketquasosobox textarea {
+  width: 70%;
+}
+
+.ketquasosoheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+}
+
+.checkkq {
+  width: 80px;
+  height: 24px;
+  text-align: center;
+  background-color: #009d9d;
+  color: #fff;
+  border-radius: 6px;
+  border: 1px solid #000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkkq:hover {
+  opacity: 90%;
+  scale: 1.01;
+}
+
+.trungsobox {
+  width: 20%;
+  padding: 10px;
+  padding-left: 0;
+}
+
+.danhsachtrungso {
+  margin-top: 20px;
+}
+
+.red {
+  color: red;
+}
+
+.kqua {
+  height: 18px;
+}
+
+.tiletinhtong {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.tile {
+  margin-right: 10px;
+  width: 140px;
+  height: 30px;
+  background-color: #f3f3f3;
+  border-radius:6px;
+  font-size: 1.2rem;
 }
