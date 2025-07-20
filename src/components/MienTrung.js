@@ -4,14 +4,14 @@ import dayjs from "dayjs";
 
 const trungTowns = [
   { code: "phye", name: "Phú Yên" },
-  { code: "thhu", name: "Thừa Thiên Huế" },
-  { code: "dakl", name: "Đắk Lắk" },
+  { code: "thth", name: "Thừa Thiên Huế" },
+  { code: "dalak", name: "Đắk Lắk" },
   { code: "quna", name: "Quảng Nam" },
   { code: "bidi", name: "Bình Định" },
   { code: "qutr", name: "Quảng Trị" },
   { code: "gila", name: "Gia Lai" },
   { code: "nith", name: "Ninh Thuận" },
-  { code: "kont", name: "Kon Tum" },
+  { code: "kotu", name: "Kon Tum" },
   { code: "dana", name: "Đà Nẵng" },
   { code: "qung", name: "Quảng Ngãi" },
   { code: "khho", name: "Khánh Hòa" },
@@ -21,7 +21,7 @@ const trungTowns = [
 
 // Danh sách tỉnh theo thứ (đúng lịch mở thưởng)
 const todayTowns = {
-  Sunday: ["thhu", "khho", "kont"],
+  Sunday: ["thth", "khho", "kotu"],
   Monday: ["thhu", "phye"],
   Tuesday: ["dakl", "quna"],
   Wednesday: ["dana", "khho"],
