@@ -6,7 +6,7 @@ export function tinhKetQuaTrungThuongMotKieu(
 ) {
   const bacTowns = [
     { code: "miba", name: "Miền Bắc" },
-    { code: "hanoo", name: "Hà Nội" },
+    { code: "hano", name: "Hà Nội" },
   ];
   const trungTowns = [
     { code: "phye", name: "Phú Yên" },
@@ -107,7 +107,7 @@ export function tinhKetQuaTrungThuongMotKieu(
     }
   }
 
-  console.log("Toàn bộ số:", tatCaSo);
+  // console.log("Toàn bộ số:", tatCaSo);
 
   const soDanhArr = maDanh.split(".");
   const isBac = mien === "Miền Bắc";

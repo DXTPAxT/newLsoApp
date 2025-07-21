@@ -47,7 +47,7 @@ const namTowns = [
 const trungSchedule = {
   Sunday: ["kotu", "khho", "thth"], // Kon Tum - Khánh Hòa - Thừa Thiên Huế (Ktum - Khoa) ✔
   Monday: ["phye", "thth"], // Phú Yên - Huế (Pyen - Hue) ✔
-  Tuesday: ["dakl", "quna"], // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
+  Tuesday: ["dalak", "quna"], // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
   Wednesday: ["dana", "khho"], // Đà Nẵng - Khánh Hòa (Dnang - Khoa) ✔
   Thursday: ["bidi", "qutr", "qubi"], // Bình Định - Quảng Trị - Quảng Bình (Bdinh - Qtri) ✔
   Friday: ["gila", "nith"], // Gia Lai - Ninh Thuận (Glai - Nthuan) ✔
@@ -60,7 +60,7 @@ const namSchedule = {
   Tuesday: ["betr", "vuta", "bali"], // Bến Tre - Vũng Tàu - Bạc Liêu (Btre - Vtau) ✔
   Wednesday: ["dona", "cath", "sotr"], // Đồng Nai - Cần Thơ - Sóc Trăng (Dnai - Ctho) ✔
   Thursday: ["tani", "angi", "bith"], // Tây Ninh - An Giang - Bình Thuận (Tninh - Agiang) ✔
-  Friday: ["vilo", "bidh", "trvi"], // Vĩnh Long - Bình Dương - Trà Vinh (Vlong - Bduong) ✔
+  Friday: ["vilo", "bidu", "trvi"], // Vĩnh Long - Bình Dương - Trà Vinh (Vlong - Bduong) ✔
   Saturday: ["tphc", "loan", "biph", "hagi"], // TPHCM - Long An - Bình Phước - Hậu Giang (Tpho - Lan) ✔
 };
 
