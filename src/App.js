@@ -5,14 +5,22 @@ import MienNam from "./components/MienNam";
 import { tinhtongtien } from "./utils/tinhTongTien";
 import { loadAllXosoResults } from "./utils/loadXosoData"; // đổi path nếu khác
 import { tinhKetQuaTrungThuongMotKieu } from "./utils/tinhKetQuaTrungThuong"; // đổi path nếu khác
+import { tachDanhSachTinhThanh } from "./utils/tachDanhSachTinhThanh"; // đổi path nếu khác
 import "./App.css";
 
 function App() {
   var counter = 0;
   var max = 10000;
   var allResults = [];
-  const ketQuaTrungThuongArr = [];
-  let tongTienTheoKieu = {
+  let tongTienTheoKieuMb = {
+    bao2so: 0,
+    bao3so: 0,
+    xiuChu: 0,
+    dauDuoi: 0,
+    da: 0,
+  };
+
+  let tongTienTheoKieuMnMt = {
     bao2so: 0,
     bao3so: 0,
     xiuChu: 0,
@@ -26,8 +34,13 @@ function App() {
       console.log("Toàn bộ kết quả hôm nay:", allResults);
       // setAllResults(allResults) hoặc xử lý tiếp tùy ứng dụng
 
-      const tien = tinhKetQuaTrungThuongMotKieu("dau", "76", "Thừa Thiên Huế", allResults);
-      console.log("Tiền trúng:", tien);
+      // const tien = tinhKetQuaTrungThuongMotKieu(
+      //   "bao",
+      //   "45",
+      //   "Hà Nội",
+      //   allResults
+      // );
+      // console.log("Tiền trúng:", tien);
     }
 
     fetchData();
@@ -39,8 +52,25 @@ function App() {
     const tongdon = document.querySelector(".tongdon");
     const tile = document.querySelector(".tile");
     const checkButton = document.querySelector(".checkButton");
+    let dongTrung = [];
 
     tinhtong.addEventListener("click", function () {
+      dongTrung = [];
+      tongTienTheoKieuMb = {
+        bao2so: 0,
+        bao3so: 0,
+        xiuChu: 0,
+        dauDuoi: 0,
+        da: 0,
+      };
+
+      tongTienTheoKieuMnMt = {
+        bao2so: 0,
+        bao3so: 0,
+        xiuChu: 0,
+        dauDuoi: 0,
+        da: 0,
+      };
       counter = 0;
       const lines = nhapdontext.value.split("\n");
       const madais = [
@@ -79,6 +109,7 @@ function App() {
         "Qngai",
         "Dnong",
         "Ktum",
+        "hn",
       ];
       const tendais = [
         "TP. HCM",
@@ -116,6 +147,7 @@ function App() {
         "Quảng Ngãi",
         "Đắk Nông",
         "Kon Tum",
+        "Hà Nội",
       ];
       var sodai = 0;
       var dai = "";
@@ -126,7 +158,6 @@ function App() {
         // gắn đài
         if (i == 0 || (sodai == 0 && lines[i] != "")) {
           dai = lines[i];
-
           if (!isNaN(dai[0])) {
             sodai = dai[0];
           } else if (dai.toLowerCase() == "hn") {
@@ -153,7 +184,6 @@ function App() {
           sodai = 0;
           // cộng từng lượt đánh
         } else if (sodai != 0 && lines[i] != "") {
-          const kieuDanhArr = [];
           luotdanh = lines[i];
           const kieuDanhPattern =
             /(bdao|xdao|bao|dax|da\d*x?|da|dau|duoi|dui|dd|x|b)/;
@@ -190,7 +220,7 @@ function App() {
           }
 
           // Tách các kiểu đánh còn lại
-          const pattern = /(bdao|xdao|bao|dao|da|dau|duoi|dui|dd|x|b)\d*/g;
+          const pattern = /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)\d*/g;
           const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
 
           // thông báo treo máy
@@ -198,15 +228,231 @@ function App() {
             alert("Bị lỗi, hãy thử lại.");
           }
           console.log(cacKieuDanh);
-          // console.log(dai);
+          console.log(dai);
           tongtien += tinhtongtien(dai, madanh, cacKieuDanh, sodai);
+
+          // tính kết quả trúng thưởng
+          var dodaimadanh = madanh.split(".")[0].length;
+          for (var kieudanh of cacKieuDanh) {
+            var heso = kieudanh.replace(/[a-z]/gi, "");
+            var danhsachdai = tachDanhSachTinhThanh(dai, madais, tendais);
+            var ketqua;
+            // console.log(danhsachdai});
+
+            if (kieudanh.startsWith("bao")) {
+              if (dodaimadanh === 2) {
+                ketqua = tinhKetQuaTrungThuongMotKieu(
+                  "bao",
+                  madanh,
+                  danhsachdai,
+                  allResults
+                );
+                if (ketqua.mien === "Miền Bắc") {
+                  tongTienTheoKieuMb.bao2so +=
+                    parseFloat(ketqua.tong) * heso || 0;
+                } else if (
+                  ketqua.mien === "Miền Nam" ||
+                  ketqua.mien === "Miền Trung"
+                ) {
+                  tongTienTheoKieuMnMt.bao2so +=
+                    parseFloat(ketqua.tong) * heso || 0;
+                }
+              } else if (dodaimadanh === 3) {
+                ketqua = tinhKetQuaTrungThuongMotKieu(
+                  "bao",
+                  madanh,
+                  danhsachdai,
+                  allResults
+                );
+                if (ketqua.mien === "Miền Bắc") {
+                  tongTienTheoKieuMb.bao3so +=
+                    parseFloat(ketqua.tong) * heso || 0;
+                } else if (
+                  ketqua.mien === "Miền Nam" ||
+                  ketqua.mien === "Miền Trung"
+                ) {
+                  tongTienTheoKieuMnMt.bao3so +=
+                    parseFloat(ketqua.tong) * heso || 0;
+                }
+              }
+            } else if (
+              kieudanh.startsWith("x") &&
+              !kieudanh.startsWith("xdao")
+            ) {
+              ketqua = tinhKetQuaTrungThuongMotKieu(
+                "x",
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.xiuChu +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.xiuChu +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            } else if (kieudanh === "dd") {
+              const ketqua = tinhKetQuaTrungThuongMotKieu(
+                kieudanh,
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.dauDuoi +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.dauDuoi +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            } else if (kieudanh.startsWith("dau")) {
+              const ketqua = tinhKetQuaTrungThuongMotKieu(
+                kieudanh,
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.dauDuoi +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.dauDuoi +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            } else if (
+              kieudanh.startsWith("duoi") ||
+              kieudanh.startsWith("dui")
+            ) {
+              const ketqua = tinhKetQuaTrungThuongMotKieu(
+                kieudanh,
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              // console.log(ketqua);
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.dauDuoi +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.dauDuoi +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            } else if (kieudanh.startsWith("da")) {
+              ketqua = tinhKetQuaTrungThuongMotKieu(
+                "da" + dodaimadanh / 2,
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.da += parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.da += parseFloat(ketqua.tong) * heso || 0;
+              }
+            }
+            if (parseFloat(ketqua.tong) > 0) {
+              dongTrung.push(i);
+            }
+          }
         }
       }
+
       var tileNhan = tile.value != "" ? tile.value.replace(",", ".") / 100 : 1;
       tongdon.innerHTML = tongtien * tileNhan;
+    });
 
+    checkButton.addEventListener("click", function () {
+      const container = document.querySelector(".danhsachtrungso");
+      const formatTien = (v) => Number(v || 0).toLocaleString("vi-VN");
 
+      const bao2Input = Number(document.querySelector(".bao2Input").value) || 0;
+      const bao3Input = Number(document.querySelector(".bao3Input").value) || 0;
+      const xiuchuInput =
+        Number(document.querySelector(".xiuchuInput").value) || 0;
+      const ddInput = Number(document.querySelector(".ddInput").value) || 0;
+      const daInputBac =
+        Number(document.querySelector(".daInputBac").value) || 0;
+      const daInputTrung =
+        Number(document.querySelector(".daInputTrung").value) || 0;
 
+      const html = `
+    <h3>Kết quả trúng thưởng</h3>
+    <table class="bang-ket-qua">
+      <thead>
+        <tr>
+          <th>Kiểu</th>
+          <th>Miền Bắc</th>
+          <th>Miền Nam / Trung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Bao 2 số</td>
+          <td>${formatTien((tongTienTheoKieuMb.bao2so * bao2Input) / 76)}</td>
+          <td>${formatTien((tongTienTheoKieuMnMt.bao2so * bao2Input) / 76)}</td>
+        </tr>
+        <tr>
+          <td>Bao 3 số</td>
+          <td>${formatTien((tongTienTheoKieuMb.bao3so * bao3Input) / 660)}</td>
+          <td>${formatTien(
+            (tongTienTheoKieuMnMt.bao3so * bao3Input) / 660
+          )}</td>
+        </tr>
+        <tr>
+          <td>Xỉu Chủ</td>
+          <td>${formatTien(
+            (tongTienTheoKieuMb.xiuChu * xiuchuInput) / 660
+          )}</td>
+          <td>${formatTien(
+            (tongTienTheoKieuMnMt.xiuChu * xiuchuInput) / 660
+          )}</td>
+        </tr>
+        <tr>
+          <td>Đầu / Đuôi</td>
+          <td>${formatTien((tongTienTheoKieuMb.dauDuoi * ddInput) / 76)}</td>
+          <td>${formatTien((tongTienTheoKieuMnMt.dauDuoi * ddInput) / 76)}</td>
+        </tr>
+        <tr>
+          <td>Đá</td>
+          <td>${formatTien((tongTienTheoKieuMb.da * daInputBac) / 660)}</td>
+          <td>${formatTien((tongTienTheoKieuMnMt.da * daInputTrung) / 560)}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+      container.innerHTML = html;
+      const ketquaView = document.querySelector(".ketquaView");
+      const rawInput = nhapdontext.value.split("\n");
+
+      const newHtml = rawInput
+        .map((line, index) => {
+          if (dongTrung.includes(index)) {
+            return `<span style="color:red">${line}</span>`;
+          } else {
+            return line;
+          }
+        })
+        .join("<br>");
+
+      // Hiển thị dòng tô đỏ
+      ketquaView.innerHTML = `<h3>Chi tiết đơn đã đánh (đỏ là trúng)</h3><pre>${newHtml}</pre>`;
     });
   }, []);
 
@@ -219,6 +465,8 @@ function App() {
         <MienTrung />
         <MienNam />
       </div>
+
+      <div className="ketquaView" style={{ margin: "20px 0", fontSize: "18px"}}></div>
 
       <div className="nhapdonGroup">
         <div className="nhapdonbox">
@@ -238,8 +486,76 @@ function App() {
           <div className="tong">Tổng</div>
           <div className="tongdon">0</div>
           <hr></hr>
-          <button className="checkButton">Check kết quả</button>
-          <div className="danhsachtrungso"></div>
+          <div className="main-row">
+            {/* Bọc 2 phần dưới vào 1 div */}
+            <div className="action-row">
+              <button className="checkButton">Check kết quả</button>
+              <div className="danhsachtrungso">...</div>
+            </div>
+            <div className="form-container">
+              <label>
+                Bao 2 số
+                <input
+                  className="bao2Input"
+                  type="text"
+                  placeholder="Bao 2 số"
+                  defaultValue="76"
+                />
+              </label>
+
+              <label>
+                Bao 3 số
+                <input
+                  className="bao3Input"
+                  type="text"
+                  placeholder="Bao 3 số"
+                  defaultValue="660"
+                />
+              </label>
+
+              <label>
+                Xỉu chủ
+                <input
+                  className="xiuchuInput"
+                  type="text"
+                  placeholder="Xỉu chủ"
+                  defaultValue="660"
+                />
+              </label>
+
+              <label>
+                Đầu Đuôi
+                <input
+                  className="ddInput"
+                  type="text"
+                  placeholder="Đầu Đuôi"
+                  defaultValue="76"
+                />
+              </label>
+
+              <div className="daGroup">
+                <label>
+                  Đá Bắc
+                  <input
+                    className="daInputBac"
+                    type="text"
+                    placeholder="Đá Bắc"
+                    defaultValue="660"
+                  />
+                </label>
+
+                <label>
+                  Đá Trung Nam
+                  <input
+                    className="daInputTrung"
+                    type="text"
+                    placeholder="Đá Trung Nam"
+                    defaultValue="560"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

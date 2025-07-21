@@ -10,7 +10,7 @@ const prizeNames = [
   "Giải tư",
   "Giải năm",
   "Giải sáu",
-  "Giải bảy"
+  "Giải bảy",
 ];
 
 function groupItems(items, perRow) {
@@ -25,26 +25,55 @@ function MienBac() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
 
   useEffect(() => {
-    axios
-      .get("https://xoso188.net/api/front/open/lottery/history/list/5/hano")
-      .then((res) => {
-        const list = res.data?.t?.issueList;
-        const today = dayjs().format("YYYYMMDD");
+    let isMounted = true;
 
-        const todayResult = list.find(
-          (item) => item.issueDate === today
-        );
+    const fetchData = async (retryCount = 5) => {
+      let attempts = 0;
+      let success = false;
 
-        if (todayResult) {
-          setResult(todayResult);
-        } else {
-          setError("Chưa có kết quả miền Bắc hôm nay.");
+      while (attempts < retryCount && !success) {
+        try {
+          const res = await axios.get(
+            "https://xoso188.net/api/front/open/lottery/history/list/5/miba"
+          );
+          const list = res.data?.t?.issueList || [];
+
+          const matched = list.find(
+            (item) =>
+              item.turnNum === yesterday || item.issueDate === yesterday
+          );
+
+          if (matched) {
+            if (isMounted) {
+              setResult(matched);
+              setError("");
+              setLoading(false);
+            }
+            success = true;
+          } else {
+            attempts++;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        } catch (err) {
+          attempts++;
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
-      })
-      .catch(() => setError("Lỗi gọi API miền Bắc."))
-      .finally(() => setLoading(false));
+      }
+
+      if (!success && isMounted) {
+        setError("Không lấy được kết quả miền Bắc sau nhiều lần thử.");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (loading) return <p>Đang tải miền Bắc...</p>;
@@ -65,7 +94,7 @@ function MienBac() {
           margin: "0 auto",
           fontSize: "18px",
           minWidth: "400px",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         <thead>
@@ -90,7 +119,9 @@ function MienBac() {
 
             return (
               <tr key={idx}>
-                <td><strong>{name}</strong></td>
+                <td>
+                  <strong>{name}</strong>
+                </td>
                 <td>
                   {rows.map((row, i) => (
                     <div key={i} style={{ marginBottom: "4px" }}>
@@ -101,7 +132,7 @@ function MienBac() {
                             marginRight: "15px",
                             color: idx === 0 ? "darkred" : "black",
                             fontWeight: idx === 0 ? "bold" : "normal",
-                            fontSize: idx === 0 ? "22px" : "inherit"
+                            fontSize: idx === 0 ? "22px" : "inherit",
                           }}
                         >
                           {num}

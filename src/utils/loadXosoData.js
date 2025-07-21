@@ -2,7 +2,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 
 // Danh sách các tỉnh thành theo 3 miền
-const bacTowns = [{ code: "xshn", name: "Miền Bắc" }];
+const bacTowns = [{ code: "miba", name: "Miền Bắc" }];
 const trungTowns = [
   { code: "phye", name: "Phú Yên" },
   { code: "thth", name: "Thừa Thiên Huế" },
@@ -66,7 +66,9 @@ const namSchedule = {
 
 export async function loadAllXosoResults() {
   const today = dayjs().format("DD/MM/YYYY");
+  const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
   const dayName = dayjs().format("dddd");
+  const yesterdayName = dayjs().subtract(1, "day").format("dddd");
 
   const provincesToCheck = [];
 
@@ -74,13 +76,13 @@ export async function loadAllXosoResults() {
   provincesToCheck.push(...bacTowns);
 
   // Miền Trung quay theo lịch
-  const trungTodayCodes = trungSchedule[dayName] || [];
+  const trungTodayCodes = trungSchedule[yesterdayName] || [];
   provincesToCheck.push(
     ...trungTowns.filter((p) => trungTodayCodes.includes(p.code))
   );
 
   // Miền Nam quay theo lịch
-  const namTodayCodes = namSchedule[dayName] || [];
+  const namTodayCodes = namSchedule[yesterdayName] || [];
   provincesToCheck.push(
     ...namTowns.filter((p) => namTodayCodes.includes(p.code))
   );
@@ -93,7 +95,7 @@ export async function loadAllXosoResults() {
         `https://xoso188.net/api/front/open/lottery/history/list/5/${p.code}`
       );
       const list = res.data?.t?.issueList || [];
-      const found = list.find((item) => item.turnNum === today);
+      const found = list.find((item) => item.turnNum === yesterday);
       if (found) {
         allResults.push({ province: p.name, data: found });
       }

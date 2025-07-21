@@ -22,11 +22,11 @@ const trungTowns = [
 // Danh sách tỉnh theo thứ (đúng lịch mở thưởng)
 const todayTowns = {
   Sunday: ["kotu", "khho", "thth"], // Kon Tum - Khánh Hòa - Thừa Thiên Huế (Ktum - Khoa) ✔
-  Monday: ["phye", "thhu"],         // Phú Yên - Huế (Pyen - Hue) ✔
-  Tuesday: ["dakl", "quna"],        // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
-  Wednesday: ["dana", "khho"],      // Đà Nẵng - Khánh Hòa (Dnang - Khoa) ✔
+  Monday: ["phye", "thhu"], // Phú Yên - Huế (Pyen - Hue) ✔
+  Tuesday: ["dakl", "quna"], // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
+  Wednesday: ["dana", "khho"], // Đà Nẵng - Khánh Hòa (Dnang - Khoa) ✔
   Thursday: ["bidi", "qutr", "qubi"], // Bình Định - Quảng Trị - Quảng Bình (Bdinh - Qtri) ✔
-  Friday: ["gila", "nith"],         // Gia Lai - Ninh Thuận (Glai - Nthuan) ✔
+  Friday: ["gila", "nith"], // Gia Lai - Ninh Thuận (Glai - Nthuan) ✔
   Saturday: ["dana", "qung", "dano"], // Đà Nẵng - Quảng Ngãi - Đắk Nông (Dnang - Qngai) ✔
 };
 
@@ -46,12 +46,14 @@ function MienTrung() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const today = dayjs().format("DD/MM/YYYY");
+  const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
 
   useEffect(() => {
     const fetchAll = async (retryCount = 5) => {
       const validResults = [];
       const weekday = dayjs().format("dddd");
-      const todayTownCodes = todayTowns[weekday] || [];
+      const previousWeekday = dayjs().subtract(1, "day").format("dddd");
+      const todayTownCodes = todayTowns[previousWeekday] || [];
 
       const todayTownList = trungTowns.filter((town) =>
         todayTownCodes.includes(town.code)
@@ -68,7 +70,7 @@ function MienTrung() {
               `https://xoso188.net/api/front/open/lottery/history/list/5/${town.code}`
             );
             const list = res.data?.t?.issueList;
-            const match = list?.find((i) => i.turnNum === today);
+            const match = list?.find((i) => i.turnNum === yesterday);
 
             if (match) {
               result = match;

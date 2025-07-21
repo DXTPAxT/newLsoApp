@@ -63,7 +63,6 @@ textarea:focus {
 }
 
 .tongbox {
-  width: 10%;
   margin-left: 60px;
 }
 
@@ -156,6 +155,115 @@ textarea:focus {
   width: 140px;
   height: 30px;
   background-color: #f3f3f3;
-  border-radius:6px;
+  border-radius: 6px;
   font-size: 1.2rem;
+}
+
+.bang-ket-qua {
+  flex: 1;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.bang-ket-qua th,
+.bang-ket-qua td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: right;
+}
+
+.bang-ket-qua th:first-child,
+.bang-ket-qua td:first-child {
+  text-align: left;
+}
+
+.main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 100px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 40%;
+  margin-left: 10px;
+}
+
+.bao2Input,
+.bao3Input,
+.xiuchuInput,
+.ddInput {
+  padding: 12px 16px;
+  font-size: 18px;
+  height: 18px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.daGroup {
+  display: flex;
+  gap: 10%;
+  justify-content: space-between;
+}
+
+.daInputBac,
+.daInputTrung {
+  width: 80%;
+  padding: 12px 16px;
+  font-size: 18px;
+  height: 18px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.action-row {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 45%;
+}
+
+.checkButton {
+  padding: 12px 20px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.checkButton:hover {
+  background-color: #0056b3;
+}
+
+.danhsachtrungso {
+  font-size: 16px;
+  padding: 8px;
+  background-color: #f2f2f2;
+  width: 100%;
+  min-height: 80px;
+  border-radius: 8px;
+}
+
+.form-container label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 6px;
+  gap: 4px;
+}
+
+.daGroup label {
+  width: 45%;
 }
