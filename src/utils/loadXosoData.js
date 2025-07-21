@@ -76,13 +76,13 @@ export async function loadAllXosoResults() {
   provincesToCheck.push(...bacTowns);
 
   // Miền Trung quay theo lịch
-  const trungTodayCodes = trungSchedule[yesterdayName] || [];
+  const trungTodayCodes = trungSchedule[dayName] || [];
   provincesToCheck.push(
     ...trungTowns.filter((p) => trungTodayCodes.includes(p.code))
   );
 
   // Miền Nam quay theo lịch
-  const namTodayCodes = namSchedule[yesterdayName] || [];
+  const namTodayCodes = namSchedule[dayName] || [];
   provincesToCheck.push(
     ...namTowns.filter((p) => namTodayCodes.includes(p.code))
   );
@@ -95,7 +95,7 @@ export async function loadAllXosoResults() {
         `https://xoso188.net/api/front/open/lottery/history/list/5/${p.code}`
       );
       const list = res.data?.t?.issueList || [];
-      const found = list.find((item) => item.turnNum === yesterday);
+      const found = list.find((item) => item.turnNum === today);
       if (found) {
         allResults.push({ province: p.name, data: found });
       }

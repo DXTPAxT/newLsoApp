@@ -70,7 +70,7 @@ function MienTrung() {
               `https://xoso188.net/api/front/open/lottery/history/list/5/${town.code}`
             );
             const list = res.data?.t?.issueList;
-            const match = list?.find((i) => i.turnNum === yesterday);
+            const match = list?.find((i) => i.turnNum === today);
 
             if (match) {
               result = match;

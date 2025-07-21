@@ -25,6 +25,7 @@ function MienBac() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const today = dayjs().format("DD/MM/YYYY");
   const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
 
   useEffect(() => {
@@ -43,7 +44,7 @@ function MienBac() {
 
           const matched = list.find(
             (item) =>
-              item.turnNum === yesterday || item.issueDate === yesterday
+              item.turnNum === today || item.issueDate === today
           );
 
           if (matched) {

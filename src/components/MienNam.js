@@ -57,7 +57,7 @@ function MienNam() {
   const todayKey = dayjs().format("dddd"); // Monday, Tuesday, ...
   const yesterdayKey = dayjs().subtract(1, "day").format("dddd");
 
-  const todayTownCodes = schedule[yesterdayKey] || [];
+  const todayTownCodes = schedule[todayKey] || [];
   const todayTowns = namTowns.filter((t) => todayTownCodes.includes(t.code));
 
   useEffect(() => {
@@ -74,7 +74,7 @@ function MienNam() {
               `https://xoso188.net/api/front/open/lottery/history/list/5/${town.code}`
             );
             const list = res.data?.t?.issueList;
-            const match = list?.find((i) => i.turnNum === yesterday);
+            const match = list?.find((i) => i.turnNum === today);
 
             if (match) {
               validResults.push({ province: town.name, data: match });
