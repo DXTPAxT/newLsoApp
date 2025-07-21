@@ -54,23 +54,25 @@ export function tinhKetQuaTrungThuongMotKieu(
   const giaiDB = [];
   const giai6 = [];
   const giai7 = [];
+  const giai8 = [];
   const provinces = Array.isArray(provinceList) ? provinceList : [provinceList];
 
   console.log(provinces);
   // console.log(allResults);
 
   for (const provinceName of provinces) {
-    const realProvinceName = provinceName == "Hà Nội" ?  "Miền Bắc" : provinceName;
+    const realProvinceName =
+      provinceName == "Hà Nội" ? "Miền Bắc" : provinceName;
 
     const ketquaDai = allResults.find(
       (res) =>
-        res.province.toLowerCase().trim() === realProvinceName.toLowerCase().trim()
+        res.province.toLowerCase().trim() ===
+        realProvinceName.toLowerCase().trim()
     );
 
     // console.log(ketquaDai);
 
-    if (!ketquaDai)
-      continue;
+    if (!ketquaDai) continue;
 
     let detailStr = ketquaDai.data["detail"] || "";
 
@@ -86,8 +88,10 @@ export function tinhKetQuaTrungThuongMotKieu(
 
             // Gom riêng giải 6 và 7
             if (idx === 6) giai6.push(...giaiN); // g6
+            if (idx === 7) giai7.push(...giaiN); // g7
           } else {
             tatCaSo.push(giai);
+            if (idx === 8) giai8.push(giai); // g8
             if (idx === 7) giai7.push(giai); // g7
             if (idx === 0) giaiDB.push(giai); // g0
           }
@@ -101,6 +105,7 @@ export function tinhKetQuaTrungThuongMotKieu(
   // console.log("Toàn bộ số:", tatCaSo);
 
   const soDanhArr = maDanh.split(".");
+  const isBac = mien === "Miền Bắc";
 
   if (kieuDanh.startsWith("bao") && soDanhArr[0].length === 2) {
     for (const so of soDanhArr) {
@@ -110,42 +115,37 @@ export function tinhKetQuaTrungThuongMotKieu(
     for (const so of soDanhArr) {
       if (tatCaSo.some((trung) => trung.endsWith(so))) tong += 660;
     }
-  } else if (kieuDanh.startsWith("dd")) {
-    for (const so of soDanhArr) {
-      const dau = so[0];
-      const duoi = so.slice(-1);
-      for (const tr of tatCaSo) {
-        if (tr.startsWith(dau) && tr.endsWith(duoi)) {
-          tong += 76;
-          break;
-        }
-      }
-    }
   } else if (kieuDanh.startsWith("dau")) {
-    // console.log(`Tính giải đầu cho ${provinceName} với số:`, soDanhArr);
     for (const so of soDanhArr) {
-      const dau = so[0];
-      for (const tr of tatCaSo) {
-        if (tr.startsWith(dau)) {
-          tong += 76;
-          break;
-        }
+      const giaiCheck = isBac ? [...giai7] : [...giai8];
+      if (giaiCheck.some((g) => (g + "").startsWith(so))) {
+        tong += 76;
       }
     }
   } else if (kieuDanh.startsWith("duoi") || kieuDanh.startsWith("dui")) {
     console.log(`Tính giải Đuôi với số:`, soDanhArr);
     for (const so of soDanhArr) {
-      const duoi = so.slice(-1);
-      for (const tr of tatCaSo) {
-        if (tr.endsWith(duoi)) {
-          tong += 76;
-          break;
-        }
+      const giaiCheck = isBac ? [...giaiDB] : [...giaiDB];
+      if (giaiCheck.some((g) => (g + "").endsWith(so))) {
+        tong += 76;
       }
     }
-  } else if (kieuDanh.startsWith("xdao") || kieuDanh === "x") {
+  } else if (kieuDanh.startsWith("dd")) {
+    console.log(`Tính giải Đuôi với số:`, soDanhArr);
     for (const so of soDanhArr) {
-      const isBac = mien === "Miền Bắc";
+      const giaiCheck = isBac ? [...giai7] : [...giai8];
+      if (giaiCheck.some((g) => (g + "").startsWith(so))) {
+        tong += 76;
+      }
+    }
+    for (const so of soDanhArr) {
+      const giaiCheck = isBac ? [...giaiDB] : [...giaiDB];
+      if (giaiCheck.some((g) => (g + "").endsWith(so))) {
+        tong += 76;
+      }
+    }
+  } else if (kieuDanh.startsWith("xdao") || kieuDanh.startsWith("x")) {
+    for (const so of soDanhArr) {
       const giaiCheck = isBac ? [giaiDB, ...giai6] : [giaiDB, giai7];
       // console.log(giaiCheck);
       if (giaiCheck.some((g) => (g + "").endsWith(so))) {
