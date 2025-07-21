@@ -46,7 +46,7 @@ const namTowns = [
 // Lịch quay cho từng miền
 const trungSchedule = {
   Sunday: ["kotu", "khho", "thth"], // Kon Tum - Khánh Hòa - Thừa Thiên Huế (Ktum - Khoa) ✔
-  Monday: ["phye", "thhu"], // Phú Yên - Huế (Pyen - Hue) ✔
+  Monday: ["phye", "thth"], // Phú Yên - Huế (Pyen - Hue) ✔
   Tuesday: ["dakl", "quna"], // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
   Wednesday: ["dana", "khho"], // Đà Nẵng - Khánh Hòa (Dnang - Khoa) ✔
   Thursday: ["bidi", "qutr", "qubi"], // Bình Định - Quảng Trị - Quảng Bình (Bdinh - Qtri) ✔
@@ -75,6 +75,7 @@ export async function loadAllXosoResults(retryCount = 10) {
 
   // Miền Trung quay theo lịch
   const trungTodayCodes = trungSchedule[dayName] || [];
+  console.log(trungTodayCodes);
   provincesToCheck.push(
     ...trungTowns.filter((p) => trungTodayCodes.includes(p.code))
   );

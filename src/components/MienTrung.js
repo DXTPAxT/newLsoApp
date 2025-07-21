@@ -22,8 +22,8 @@ const trungTowns = [
 // Danh sách tỉnh theo thứ (đúng lịch mở thưởng)
 const todayTowns = {
   Sunday: ["kotu", "khho", "thth"], // Kon Tum - Khánh Hòa - Thừa Thiên Huế (Ktum - Khoa) ✔
-  Monday: ["phye", "thhu"], // Phú Yên - Huế (Pyen - Hue) ✔
-  Tuesday: ["dakl", "quna"], // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
+  Monday: ["phye", "thth"], // Phú Yên - Huế (Pyen - Hue) ✔
+  Tuesday: ["dalak", "quna"], // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
   Wednesday: ["dana", "khho"], // Đà Nẵng - Khánh Hòa (Dnang - Khoa) ✔
   Thursday: ["bidi", "qutr", "qubi"], // Bình Định - Quảng Trị - Quảng Bình (Bdinh - Qtri) ✔
   Friday: ["gila", "nith"], // Gia Lai - Ninh Thuận (Glai - Nthuan) ✔
@@ -53,7 +53,8 @@ function MienTrung() {
       const validResults = [];
       const weekday = dayjs().format("dddd");
       const previousWeekday = dayjs().subtract(1, "day").format("dddd");
-      const todayTownCodes = todayTowns[previousWeekday] || [];
+      const todayTownCodes = todayTowns[weekday] || [];
+      
 
       const todayTownList = trungTowns.filter((town) =>
         todayTownCodes.includes(town.code)
