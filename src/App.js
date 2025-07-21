@@ -26,6 +26,7 @@ function App() {
     xiuChu: 0,
     dauDuoi: 0,
     da: 0,
+    daMotDai: 0, // Đá 1 chỉ có ở Miền Nam
   };
 
   useEffect(() => {
@@ -70,6 +71,7 @@ function App() {
         xiuChu: 0,
         dauDuoi: 0,
         da: 0,
+        daMotDai: 0, // Đá 1 chỉ có ở Miền Nam
       };
       counter = 0;
       const lines = nhapdontext.value.split("\n");
@@ -311,6 +313,7 @@ function App() {
               ) {
                 tongTienTheoKieuMnMt.dauDuoi +=
                   parseFloat(ketqua.tong) * heso || 0;
+                // console.log(tongTienTheoKieuMnMt.dauDuoi);
               }
             } else if (kieudanh.startsWith("dau")) {
               ketqua = tinhKetQuaTrungThuongMotKieu(
@@ -350,7 +353,7 @@ function App() {
                 tongTienTheoKieuMnMt.dauDuoi +=
                   parseFloat(ketqua.tong) * heso || 0;
               }
-            } else if (kieudanh.startsWith("da")) {
+            } else if (kieudanh.startsWith("da") && danhsachdai.length != 1) {
               ketqua = tinhKetQuaTrungThuongMotKieu(
                 "da" + dodaimadanh / 2,
                 madanh,
@@ -363,15 +366,35 @@ function App() {
                 ketqua.mien === "Miền Nam" ||
                 ketqua.mien === "Miền Trung"
               ) {
+                // console.log(danhsachdai.length);
                 tongTienTheoKieuMnMt.da += parseFloat(ketqua.tong) * heso || 0;
               }
+            } else if (kieudanh.startsWith("da") && danhsachdai.length === 1) {
+              ketqua = tinhKetQuaTrungThuongMotKieu(
+                "da" + dodaimadanh / 2,
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.da += parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                // console.log(danhsachdai.length);
+                if (danhsachdai.length === 1) {
+                  tongTienTheoKieuMnMt.daMotDai +=
+                    parseFloat(ketqua.tong) * heso || 0;
+                }
+              }
             }
-            console.log(ketqua);
+            // console.log(ketqua);
+            // console.log(tongTienTheoKieuMnMt.daMotDai);
             if (parseFloat(ketqua.tong) > 0) {
               dongTrung.push(i);
             }
           }
-          console.log(dongTrung);
         }
       }
 
@@ -392,6 +415,7 @@ function App() {
         Number(document.querySelector(".daInputBac").value) || 0;
       const daInputTrung =
         Number(document.querySelector(".daInputTrung").value) || 0;
+      const daMotDai = Number(document.querySelector(".daMotDai").value) || 0;
 
       const html = `
     <h3>Kết quả trúng thưởng</h3>
@@ -434,6 +458,13 @@ function App() {
           <td>Đá</td>
           <td>${formatTien((tongTienTheoKieuMb.da * daInputBac) / 660)}</td>
           <td>${formatTien((tongTienTheoKieuMnMt.da * daInputTrung) / 560)}</td>
+        </tr>
+        <tr>
+          <td>Đá 1</td>
+          <td></td>
+          <td>${formatTien(
+            (tongTienTheoKieuMnMt.daMotDai * daMotDai) / 750
+          )}</td>
         </tr>
       </tbody>
     </table>
@@ -548,16 +579,26 @@ function App() {
                     defaultValue="660"
                   />
                 </label>
-
-                <label>
-                  Đá Trung Nam
-                  <input
-                    className="daInputTrung"
-                    type="text"
-                    placeholder="Đá Trung Nam"
-                    defaultValue="560"
-                  />
-                </label>
+                <div>
+                  <label>
+                    Đá Trung Nam
+                    <input
+                      className="daInputTrung"
+                      type="text"
+                      placeholder="Đá Trung Nam"
+                      defaultValue="560"
+                    />
+                  </label>
+                  <label>
+                    Đá 1
+                    <input
+                      className="daMotDai"
+                      type="text"
+                      placeholder="Đá Trung Nam"
+                      defaultValue="750"
+                    />
+                  </label>
+                </div>
               </div>
             </div>
           </div>

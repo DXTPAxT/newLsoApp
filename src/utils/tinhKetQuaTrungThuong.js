@@ -154,10 +154,18 @@ export function tinhKetQuaTrungThuongMotKieu(
     }
   } else if (kieuDanh.startsWith("da")) {
     let round = parseInt(kieuDanh.replace("da", ""));
+    const soDai = provinces.length;
     if (isNaN(round)) round = 2; // Nếu không có số => mặc định là 2
 
     if (round >= 2) {
-      const tienDa = mien === "Miền Bắc" ? 660 : 560;
+      let tienDa = 0;
+      // console.log(soDai);
+      if (soDai === 1) {
+        tienDa = mien === "Miền Bắc" ? 660 : 750;
+      } else {
+        tienDa = mien === "Miền Bắc" ? 660 : 560;
+      }
+      // console.log(tienDa);
 
       // B1: Tách từng cặp 2 số từ maDanh (VD: "4500" => ["45", "00"])
       const soDanhArr = [];

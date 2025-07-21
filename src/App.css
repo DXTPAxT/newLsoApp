@@ -213,7 +213,8 @@ textarea:focus {
 }
 
 .daInputBac,
-.daInputTrung {
+.daInputTrung,
+.daMotDai {
   width: 80%;
   padding: 12px 16px;
   font-size: 18px;
