@@ -21,13 +21,13 @@ const trungTowns = [
 
 // Danh sách tỉnh theo thứ (đúng lịch mở thưởng)
 const todayTowns = {
-  Sunday: ["thth", "khho", "kotu"],
-  Monday: ["thhu", "phye"],
-  Tuesday: ["dakl", "quna"],
-  Wednesday: ["dana", "khho"],
-  Thursday: ["bidi", "qubi", "qutr"],
-  Friday: ["gila", "nith"],
-  Saturday: ["dana", "dano", "qung"],
+  Sunday: ["kotu", "khho", "thth"], // Kon Tum - Khánh Hòa - Thừa Thiên Huế (Ktum - Khoa) ✔
+  Monday: ["phye", "thhu"],         // Phú Yên - Huế (Pyen - Hue) ✔
+  Tuesday: ["dakl", "quna"],        // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
+  Wednesday: ["dana", "khho"],      // Đà Nẵng - Khánh Hòa (Dnang - Khoa) ✔
+  Thursday: ["bidi", "qutr", "qubi"], // Bình Định - Quảng Trị - Quảng Bình (Bdinh - Qtri) ✔
+  Friday: ["gila", "nith"],         // Gia Lai - Ninh Thuận (Glai - Nthuan) ✔
+  Saturday: ["dana", "qung", "dano"], // Đà Nẵng - Quảng Ngãi - Đắk Nông (Dnang - Qngai) ✔
 };
 
 const prizeNames = [
@@ -76,13 +76,13 @@ function MienTrung() {
             } else {
               attempt++;
               if (attempt < retryCount) {
-                await new Promise((r) => setTimeout(r, 3000));
+                await new Promise((r) => setTimeout(r, 1000));
               }
             }
           } catch (error) {
             attempt++;
             if (attempt < retryCount) {
-              await new Promise((r) => setTimeout(r, 3000));
+              await new Promise((r) => setTimeout(r, 1000));
             }
           }
         }

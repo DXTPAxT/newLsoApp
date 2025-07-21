@@ -28,13 +28,13 @@ const namTowns = [
 
 // ✅ Chỉ định các tỉnh quay theo từng ngày
 const schedule = {
-  Sunday: ["tigi", "kigi", "dalat"], // Tiền Giang, Kiên Giang, Đà Lạt
-  Monday: ["cama", "doth", "tphc"], // Cà Mau, Đồng Tháp, TPHCM
-  Tuesday: ["bali", "betr", "vuta"], // Bạc Liêu, Bến Tre, Vũng Tàu
-  Wednesday: ["cath", "dona", "sotr"], // Cần Thơ, Đồng Nai, Sóc Trăng
-  Thursday: ["angi", "bith", "tani"], // An Giang, Bình Thuận, Tây Ninh
-  Friday: ["bidh", "trvi", "vilo"], // Bình Dương, Trà Vinh, Vĩnh Long
-  Saturday: ["biph", "hagi", "loan", "tphc"], // Bình Phước, Hậu Giang, Long An, TPHCM
+  Sunday: ["tigi", "kigi", "dalat"], // Tiền Giang, Kiên Giang, Đà Lạt (Tgiang - Kgiang) ✔
+  Monday: ["tphc", "doth", "cama"], // TPHCM - Đồng Tháp - Cà Mau (Tpho - Dthap) ✔
+  Tuesday: ["betr", "vuta", "bali"], // Bến Tre - Vũng Tàu - Bạc Liêu (Btre - Vtau) ✔
+  Wednesday: ["dona", "cath", "sotr"], // Đồng Nai - Cần Thơ - Sóc Trăng (Dnai - Ctho) ✔
+  Thursday: ["tani", "angi", "bith"], // Tây Ninh - An Giang - Bình Thuận (Tninh - Agiang) ✔
+  Friday: ["vilo", "bidh", "trvi"], // Vĩnh Long - Bình Dương - Trà Vinh (Vlong - Bduong) ✔
+  Saturday: ["tphc", "loan", "biph", "hagi"], // TPHCM - Long An - Bình Phước - Hậu Giang (Tpho - Lan) ✔
 };
 
 const prizeNames = [
@@ -79,11 +79,11 @@ function MienNam() {
               success = true;
             } else {
               attempts++;
-              await new Promise((resolve) => setTimeout(resolve, 3000)); // chờ 5s rồi thử lại
+              await new Promise((resolve) => setTimeout(resolve, 1000)); // chờ 5s rồi thử lại
             }
           } catch (err) {
             attempts++;
-            await new Promise((resolve) => setTimeout(resolve, 3000)); // lỗi thì chờ 5s rồi thử lại
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // lỗi thì chờ 5s rồi thử lại
           }
         }
       }
