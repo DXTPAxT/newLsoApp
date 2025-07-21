@@ -56,6 +56,7 @@ export function tinhKetQuaTrungThuongMotKieu(
   const giai7 = [];
   const giai8 = [];
   const provinces = Array.isArray(provinceList) ? provinceList : [provinceList];
+  const soTrungArr = [];
 
   // console.log(provinces);
   // console.log(allResults);
@@ -76,7 +77,7 @@ export function tinhKetQuaTrungThuongMotKieu(
     // console.log(realProvinceName);
     // console.log(ketquaDai);
     // console.log("=======");
-    
+
     if (!ketquaDai) continue;
 
     let detailStr = ketquaDai.data["detail"] || "";
@@ -114,17 +115,24 @@ export function tinhKetQuaTrungThuongMotKieu(
 
   if (kieuDanh.startsWith("bao") && soDanhArr[0].length === 2) {
     for (const so of soDanhArr) {
-      if (tatCaSo.some((trung) => trung.endsWith(so))) tong += 76;
+      if (tatCaSo.some((trung) => trung.endsWith(so))) {
+        tong += 76;
+        soTrungArr.push(so);
+      }
     }
   } else if (kieuDanh.startsWith("bao") && soDanhArr[0].length === 3) {
     for (const so of soDanhArr) {
-      if (tatCaSo.some((trung) => trung.endsWith(so))) tong += 660;
+      if (tatCaSo.some((trung) => trung.endsWith(so))) {
+        tong += 660;
+        soTrungArr.push(so);
+      }
     }
   } else if (kieuDanh.startsWith("dau")) {
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [...giai7] : [...giai8];
       if (giaiCheck.some((g) => (g + "").startsWith(so))) {
         tong += 76;
+        soTrungArr.push(so);
       }
     }
   } else if (kieuDanh.startsWith("duoi") || kieuDanh.startsWith("dui")) {
@@ -133,6 +141,7 @@ export function tinhKetQuaTrungThuongMotKieu(
       const giaiCheck = isBac ? [...giaiDB] : [...giaiDB];
       if (giaiCheck.some((g) => (g + "").endsWith(so))) {
         tong += 76;
+        soTrungArr.push(so);
       }
     }
   } else if (kieuDanh.startsWith("dd")) {
@@ -141,12 +150,14 @@ export function tinhKetQuaTrungThuongMotKieu(
       const giaiCheck = isBac ? [...giai7] : [...giai8];
       if (giaiCheck.some((g) => (g + "").startsWith(so))) {
         tong += 76;
+        soTrungArr.push(so);
       }
     }
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [...giaiDB] : [...giaiDB];
       if (giaiCheck.some((g) => (g + "").endsWith(so))) {
         tong += 76;
+        soTrungArr.push(so);
       }
     }
   } else if (kieuDanh.startsWith("xdao") || kieuDanh.startsWith("x")) {
@@ -155,6 +166,7 @@ export function tinhKetQuaTrungThuongMotKieu(
       // console.log(giaiCheck);
       if (giaiCheck.some((g) => (g + "").endsWith(so))) {
         tong += 660;
+        soTrungArr.push(so);
       }
     }
   } else if (kieuDanh.startsWith("da")) {
@@ -173,27 +185,36 @@ export function tinhKetQuaTrungThuongMotKieu(
       // console.log(tienDa);
 
       // B1: Tách từng cặp 2 số từ maDanh (VD: "4500" => ["45", "00"])
-      const soDanhArr = [];
       maDanh.split(".").forEach((str) => {
+        // console.log(`Tách cặp số từ maDanh: ${str}`);
+        const soDanhArr = [];
         for (let i = 0; i + 1 < str.length; i += 2) {
           soDanhArr.push(str.substring(i, i + 2));
         }
-      });
+        // console.log(`Các cặp số tách được:`, soDanhArr);
+        // console.log(round);
+        // console.log(tatCaSo);
+        // console.log("=======");
 
-      // B2: Lấy theo round, nhưng không vượt quá độ dài mảng
-      const soCanLay = Math.min(round, soDanhArr.length);
-      const soDaXet = soDanhArr.slice(0, soCanLay);
+        // B2: Lấy theo round, nhưng không vượt quá độ dài mảng
+        const soCanLay = Math.min(round, soDanhArr.length);
+        const soDaXet = soDanhArr.slice(0, soCanLay);
 
-      // B3: Tạo các cặp và kiểm tra trúng cả hai số trong một cặp
-      for (let i = 0; i < soDaXet.length - 1; i++) {
-        for (let j = i + 1; j < soDaXet.length; j++) {
-          const a = soDaXet[i];
-          const b = soDaXet[j];
-          const trungA = tatCaSo.some((g) => g.endsWith(a));
-          const trungB = tatCaSo.some((g) => g.endsWith(b));
-          if (trungA && trungB) tong += tienDa;
+        // B3: Tạo các cặp và kiểm tra trúng cả hai số trong một cặp
+        for (let i = 0; i < soDaXet.length - 1; i++) {
+          for (let j = i + 1; j < soDaXet.length; j++) {
+            const a = soDaXet[i];
+            const b = soDaXet[j];
+            const trungA = tatCaSo.some((g) => g.endsWith(a));
+            const trungB = tatCaSo.some((g) => g.endsWith(b));
+            if (trungA && trungB) {
+              tong += tienDa;
+              const cap = [a, b].join(" "); // giữ định dạng cặp theo thứ tự
+              if (!soTrungArr.includes(cap)) soTrungArr.push(cap);
+            }
+          }
         }
-      }
+      });
     }
   }
 
@@ -226,6 +247,6 @@ export function tinhKetQuaTrungThuongMotKieu(
   return {
     tong,
     mien: xacDinhMien(provinces), // tùy logic bạn xác định
-    soTrung: [], // nếu cần liệt kê
+    soTrung: soTrungArr, // nếu cần liệt kê
   };
 }

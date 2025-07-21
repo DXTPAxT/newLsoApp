@@ -55,10 +55,10 @@ function App() {
     const tongdon = document.querySelector(".tongdon");
     const tile = document.querySelector(".tile");
     const checkButton = document.querySelector(".checkButton");
-    let dongTrung = [];
+    let dongTrungMap = new Map();
 
     tinhtong.addEventListener("click", function () {
-      dongTrung = [];
+      dongTrungMap = new Map();
       tongTienTheoKieuMb = {
         bao2so: 0,
         bao3so: 0,
@@ -190,7 +190,7 @@ function App() {
         } else if (sodai != 0 && lines[i] != "") {
           luotdanh = lines[i];
           const kieuDanhPattern =
-            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d+([.,]\d+)?)/g;
+            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d*[a-z]*\d*)/gi
           const match = luotdanh.match(kieuDanhPattern);
 
           let madanh = "";
@@ -225,7 +225,7 @@ function App() {
 
           // Tách các kiểu đánh còn lại
           const pattern =
-            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d+([.,]\d+)?)/g;
+            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d*[a-z]*\d*)/gi
           const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
 
           // thông báo treo máy
@@ -256,8 +256,8 @@ function App() {
 
             // console.log("");
             // console.log(danhsachdai);
-            // console.log(madanh);
-            // console.log(kieudanh);
+            console.log(madanh);
+            console.log(kieudanh);
             // console.log(heso);
 
             if (kieudanh.startsWith("b")) {
@@ -410,8 +410,18 @@ function App() {
             }
             // console.log(ketqua);
             // console.log(tongTienTheoKieuMnMt.daMotDai);
-            if (parseFloat(ketqua.tong) > 0) {
-              dongTrung.push(i);
+            if (
+              !kieudanh.startsWith("b") ||
+              (kieudanh.startsWith("b") && dodaimadanh != 4)
+            ) {
+              if (parseFloat(ketqua.tong) > 0) {
+                // ketqua.danhsachTrung giả sử là mảng số trúng
+                if (dongTrungMap.has(i)) {
+                  dongTrungMap.get(i).push(...(ketqua.soTrung || []));
+                } else {
+                  dongTrungMap.set(i, [...(ketqua.soTrung || [])]);
+                }
+              }
             }
           }
         }
@@ -494,8 +504,9 @@ function App() {
 
       const newHtml = rawInput
         .map((line, index) => {
-          if (dongTrung.includes(index)) {
-            return `<span style="color:red">${line}</span>`;
+          if (dongTrungMap.has(index)) {
+            const trung = dongTrungMap.get(index).join(", ");
+            return `<span style="color:red">${line}</span> <span style="color:blue">→ Trúng: ${trung}</span>`;
           } else {
             return line;
           }
@@ -538,13 +549,13 @@ function App() {
       <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
         <div>
           <MienBac selectedDate={selectedDate} />
-          <h3 style={{ fontSize: "24px"}}>
+          <h3 style={{ fontSize: "24px" }}>
             Kết quả trúng thưởng{" "}
             {selectedDate == "today" ? "hôm nay" : "hôm qua"}
           </h3>
           <div
             style={{
-              maxWidth: "460px",
+              maxWidth: "600px",
               maxHeight: "300px",
               overflow: "auto",
               border: "1px solid #ccc",
