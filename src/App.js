@@ -33,6 +33,7 @@ function App() {
     async function fetchData() {
       allResults = await loadAllXosoResults();
       console.log("Toàn bộ kết quả hôm nay:", allResults);
+      alert("Dữ liệu kết quả xổ số hôm nay đã được tải!");
       // setAllResults(allResults) hoặc xử lý tiếp tùy ứng dụng
 
       // const tien = tinhKetQuaTrungThuongMotKieu(
@@ -231,11 +232,11 @@ function App() {
             alert("Bị lỗi, hãy thử lại.");
           }
 
-          console.log(cacKieuDanh);
-          console.log(dai);
+          // console.log(cacKieuDanh);
+          // console.log(dai);
           tongtien += tinhtongtien(dai, madanh, cacKieuDanh, sodai);
-          console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
-          console.log(tongtien);
+          // console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
+          // console.log(tongtien);
 
           // tính kết quả trúng thưởng
           var dodaimadanh = madanh.split(".")[0].length;
@@ -246,7 +247,12 @@ function App() {
               : 1;
             var danhsachdai = tachDanhSachTinhThanh(dai, madais, tendais);
             var ketqua;
-            // console.log(danhsachdai});
+
+            // console.log("");
+            // console.log(danhsachdai);
+            // console.log(madanh);
+            // console.log(kieudanh);
+            // console.log(heso);
 
             if (kieudanh.startsWith("b")) {
               if (dodaimadanh === 2) {
@@ -425,7 +431,6 @@ function App() {
       const daMotDai = Number(document.querySelector(".daMotDai").value) || 0;
 
       const html = `
-    <h3>Kết quả trúng thưởng</h3>
     <table class="bang-ket-qua">
       <thead>
         <tr>
@@ -506,6 +511,7 @@ function App() {
         <MienNam />
       </div>
 
+      <h3>Kết quả trúng thưởng</h3>
       <div
         style={{
           maxWidth: "600px",

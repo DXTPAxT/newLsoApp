@@ -15,7 +15,7 @@ function da(dai, luotdanhArr, sodai) {
   var madanh = luotdanhArr[0].split(".");
   var tongtien = 0;
   if (sodai != 3) {
-    console.log(madanh[i]);
+    // console.log(madanh[i]);
     for (var i = 0; i < madanh.length; i++) {
       if (madanh[i] === "") continue;
       if (madanh[i].length === 4) hesoma = dai === "hn" ? 54 : 36;

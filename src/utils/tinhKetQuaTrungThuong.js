@@ -70,8 +70,13 @@ export function tinhKetQuaTrungThuongMotKieu(
         realProvinceName.toLowerCase().trim()
     );
 
+    // console.log(kieuDanh);
+    // console.log(maDanh);
+    // console.log(provinceName);
+    // console.log(realProvinceName);
     // console.log(ketquaDai);
-
+    // console.log("=======");
+    
     if (!ketquaDai) continue;
 
     let detailStr = ketquaDai.data["detail"] || "";
@@ -102,7 +107,7 @@ export function tinhKetQuaTrungThuongMotKieu(
     }
   }
 
-  // console.log("Toàn bộ số:", tatCaSo);
+  console.log("Toàn bộ số:", tatCaSo);
 
   const soDanhArr = maDanh.split(".");
   const isBac = mien === "Miền Bắc";
