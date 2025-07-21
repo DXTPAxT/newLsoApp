@@ -295,8 +295,8 @@ function App() {
                 tongTienTheoKieuMnMt.xiuChu +=
                   parseFloat(ketqua.tong) * heso || 0;
               }
-            } else if (kieudanh === "dd") {
-              const ketqua = tinhKetQuaTrungThuongMotKieu(
+            } else if (kieudanh.startsWith("dd")) {
+              ketqua = tinhKetQuaTrungThuongMotKieu(
                 kieudanh,
                 madanh,
                 danhsachdai,
@@ -313,7 +313,7 @@ function App() {
                   parseFloat(ketqua.tong) * heso || 0;
               }
             } else if (kieudanh.startsWith("dau")) {
-              const ketqua = tinhKetQuaTrungThuongMotKieu(
+              ketqua = tinhKetQuaTrungThuongMotKieu(
                 kieudanh,
                 madanh,
                 danhsachdai,
@@ -333,7 +333,7 @@ function App() {
               kieudanh.startsWith("duoi") ||
               kieudanh.startsWith("dui")
             ) {
-              const ketqua = tinhKetQuaTrungThuongMotKieu(
+              ketqua = tinhKetQuaTrungThuongMotKieu(
                 kieudanh,
                 madanh,
                 danhsachdai,
@@ -366,10 +366,12 @@ function App() {
                 tongTienTheoKieuMnMt.da += parseFloat(ketqua.tong) * heso || 0;
               }
             }
+            console.log(ketqua);
             if (parseFloat(ketqua.tong) > 0) {
               dongTrung.push(i);
             }
           }
+          console.log(dongTrung);
         }
       }
 
@@ -466,7 +468,10 @@ function App() {
         <MienNam />
       </div>
 
-      <div className="ketquaView" style={{ margin: "20px 0", fontSize: "18px"}}></div>
+      <div
+        className="ketquaView"
+        style={{ margin: "20px 0", fontSize: "18px" }}
+      ></div>
 
       <div className="nhapdonGroup">
         <div className="nhapdonbox">
