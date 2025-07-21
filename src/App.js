@@ -9,6 +9,7 @@ import { tachDanhSachTinhThanh } from "./utils/tachDanhSachTinhThanh"; // đổi
 import "./App.css";
 
 function App() {
+  const [selectedDate, setSelectedDate] = useState("today");
   var counter = 0;
   var max = 10000;
   var allResults = [];
@@ -31,9 +32,9 @@ function App() {
 
   useEffect(() => {
     async function fetchData() {
-      allResults = await loadAllXosoResults();
-      console.log("Toàn bộ kết quả hôm nay:", allResults);
-      alert("Dữ liệu kết quả xổ số hôm nay đã được tải!");
+      allResults = await loadAllXosoResults(selectedDate);
+      console.log("Toàn bộ kết quả:", allResults);
+      alert("Dữ liệu kết quả xổ số đã được tải!");
       // setAllResults(allResults) hoặc xử lý tiếp tùy ứng dụng
 
       // const tien = tinhKetQuaTrungThuongMotKieu(
@@ -46,7 +47,7 @@ function App() {
     }
 
     fetchData();
-  }, []);
+  }, [selectedDate]);
 
   useEffect(() => {
     const nhapdontext = document.querySelector(".nhapdontext");
@@ -245,7 +246,12 @@ function App() {
             var heso = matchHeSo
               ? parseFloat(matchHeSo[0].replace(",", "."))
               : 1;
-            var danhsachdai = tachDanhSachTinhThanh(dai, madais, tendais);
+            var danhsachdai = tachDanhSachTinhThanh(
+              dai,
+              madais,
+              tendais,
+              selectedDate
+            );
             var ketqua;
 
             // console.log("");
@@ -499,32 +505,60 @@ function App() {
       // Hiển thị dòng tô đỏ
       ketquaView.innerHTML = `<h3>Chi tiết đơn đã đánh (đỏ là trúng)</h3><pre>${newHtml}</pre>`;
     });
-  }, []);
+  }, [selectedDate]);
+
+  const handleChange = (e) => {
+    setSelectedDate(e.target.value);
+  };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Kết quả Xổ Số hôm nay</h1>
+      <h1>
+        Kết quả Xổ Số ngày {selectedDate == "today" ? "hôm nay" : "hôm qua"}
+      </h1>
 
-      <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
-        <MienBac />
-        <MienTrung />
-        <MienNam />
+      {/* Thẻ select chọn ngày */}
+      <div style={{ marginBottom: "20px", fontSize: "24px" }}>
+        <label htmlFor="dateSelect">Chọn ngày: </label>
+        <select
+          id="dateSelect"
+          value={selectedDate}
+          onChange={handleChange}
+          style={{ fontSize: "24px" }}
+        >
+          <option value="today" style={{ fontSize: "24px" }}>
+            Hôm nay
+          </option>
+          <option value="yesterday" style={{ fontSize: "24px" }}>
+            Hôm qua
+          </option>
+        </select>
       </div>
 
-      <h3>Kết quả trúng thưởng</h3>
-      <div
-        style={{
-          maxWidth: "600px",
-          maxHeight: "400px",
-          overflow: "auto",
-          border: "1px solid #ccc",
-          padding: "10px",
-        }}
-      >
-        <div
-          className="ketquaView"
-          style={{ margin: "20px 0", fontSize: "20px" }}
-        ></div>
+      <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
+        <div>
+          <MienBac selectedDate={selectedDate} />
+          <h3 style={{ fontSize: "24px"}}>
+            Kết quả trúng thưởng{" "}
+            {selectedDate == "today" ? "hôm nay" : "hôm qua"}
+          </h3>
+          <div
+            style={{
+              maxWidth: "460px",
+              maxHeight: "300px",
+              overflow: "auto",
+              border: "1px solid #ccc",
+              padding: "10px",
+            }}
+          >
+            <div
+              className="ketquaView"
+              style={{ margin: "20px 0", fontSize: "16px" }}
+            ></div>
+          </div>
+        </div>
+        <MienTrung selectedDate={selectedDate} />
+        <MienNam selectedDate={selectedDate} />
       </div>
 
       <div className="nhapdonGroup">

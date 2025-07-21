@@ -21,12 +21,13 @@ function groupItems(items, perRow) {
   return rows;
 }
 
-function MienBac() {
+function MienBac({ selectedDate }) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const today = dayjs().format("DD/MM/YYYY");
   const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
+  const selectDate = selectedDate === "yesterday" ? yesterday : today;
 
   useEffect(() => {
     let isMounted = true;
@@ -44,7 +45,7 @@ function MienBac() {
 
           const matched = list.find(
             (item) =>
-              item.turnNum === today || item.issueDate === today
+              item.turnNum === selectDate || item.issueDate === selectDate
           );
 
           if (matched) {
@@ -75,7 +76,7 @@ function MienBac() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [selectDate]);
 
   if (loading) return <p>Đang tải miền Bắc...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;

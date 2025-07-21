@@ -64,9 +64,13 @@ const namSchedule = {
   Saturday: ["tphc", "loan", "biph", "hagi"], // TPHCM - Long An - Bình Phước - Hậu Giang (Tpho - Lan) ✔
 };
 
-export async function loadAllXosoResults(retryCount = 10) {
+export async function loadAllXosoResults(setSelectedDate, retryCount = 10) {
   const today = dayjs().format("DD/MM/YYYY");
+  const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
+  const selectDate = setSelectedDate === "yesterday" ? yesterday : today;
   const dayName = dayjs().format("dddd");
+  const previousDayName = dayjs().subtract(1, "day").format("dddd");
+  const selectDayName = setSelectedDate === "yesterday" ? previousDayName : dayName;
 
   const provincesToCheck = [];
 
@@ -74,14 +78,14 @@ export async function loadAllXosoResults(retryCount = 10) {
   provincesToCheck.push(...bacTowns);
 
   // Miền Trung quay theo lịch
-  const trungTodayCodes = trungSchedule[dayName] || [];
+  const trungTodayCodes = trungSchedule[selectDayName] || [];
   // console.log(trungTodayCodes);
   provincesToCheck.push(
     ...trungTowns.filter((p) => trungTodayCodes.includes(p.code))
   );
 
   // Miền Nam quay theo lịch
-  const namTodayCodes = namSchedule[dayName] || [];
+  const namTodayCodes = namSchedule[selectDayName] || [];
   provincesToCheck.push(
     ...namTowns.filter((p) => namTodayCodes.includes(p.code))
   );
@@ -98,7 +102,7 @@ export async function loadAllXosoResults(retryCount = 10) {
           `https://xoso188.net/api/front/open/lottery/history/list/5/${p.code}`
         );
         const list = res.data?.t?.issueList || [];
-        const found = list.find((item) => item.turnNum === today);
+        const found = list.find((item) => item.turnNum === selectDate);
         if (found) {
           allResults.push({ province: p.name, data: found });
           success = true;

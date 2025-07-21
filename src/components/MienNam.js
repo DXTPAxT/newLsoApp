@@ -49,15 +49,17 @@ const prizeNames = [
   "Giải Đặc Biệt",
 ];
 
-function MienNam() {
+function MienNam({ selectedDate }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const today = dayjs().format("DD/MM/YYYY");
   const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
   const todayKey = dayjs().format("dddd"); // Monday, Tuesday, ...
   const yesterdayKey = dayjs().subtract(1, "day").format("dddd");
+  const selectDate = selectedDate === "yesterday" ? yesterday : today;
+  const selectKey = selectedDate === "yesterday" ? yesterdayKey : todayKey;
 
-  const todayTownCodes = schedule[todayKey] || [];
+  const todayTownCodes = schedule[selectKey] || [];
   const todayTowns = namTowns.filter((t) => todayTownCodes.includes(t.code));
 
   useEffect(() => {
@@ -74,7 +76,7 @@ function MienNam() {
               `https://xoso188.net/api/front/open/lottery/history/list/5/${town.code}`
             );
             const list = res.data?.t?.issueList;
-            const match = list?.find((i) => i.turnNum === today);
+            const match = list?.find((i) => i.turnNum === selectDate);
 
             if (match) {
               validResults.push({ province: town.name, data: match });
@@ -95,21 +97,21 @@ function MienNam() {
     };
 
     fetchAll();
-  }, [today]);
+  }, [selectDate]);
 
   if (loading) return <p>Đang tải miền Nam...</p>;
 
   if (results.length === 0) {
     return (
       <p style={{ color: "red" }}>
-        Hôm nay ({today}) chưa có kết quả xổ số miền Nam nào được cập nhật.
+        Hôm nay ({selectDate}) chưa có kết quả xổ số miền Nam nào được cập nhật.
       </p>
     );
   }
 
   return (
     <div>
-      <h2 style={{ textAlign: "center" }}>Kết quả xổ số Miền Nam - {today}</h2>
+      <h2 style={{ textAlign: "center" }}>Kết quả xổ số Miền Nam - {selectDate}</h2>
       <div style={{ overflowX: "auto" }}>
         <table
           border="1"

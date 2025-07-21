@@ -68,7 +68,7 @@ const namSchedule = {
  * @param {string} chuoiDai - Chuỗi liền nhau, ví dụ: "ktumkhoa" hoặc "2dt"
  * @returns {string[]} Danh sách tên tỉnh đầy đủ
  */
-export function tachDanhSachTinhThanh(chuoiDai, maDais, tenDais) {
+export function tachDanhSachTinhThanh(chuoiDai, maDais, tenDais, selectedDate) {
   const input = chuoiDai.toLowerCase().trim();
 
   // Xử lý dạng "2dt", "3dn"...
@@ -78,10 +78,11 @@ export function tachDanhSachTinhThanh(chuoiDai, maDais, tenDais) {
     const loai = matchSoMien[2];
     const ngay = dayjs().format("dddd"); // Ví dụ: "Monday"
     const homqua = dayjs().subtract(1, "day").format("dddd"); // Ví dụ: "Sunday"
+    const selectedDay  = selectedDate === "yesterday" ? homqua : ngay;
 
     let schedule = [];
-    if (loai === "dt") schedule = trungSchedule[homqua] || [];
-    if (loai === "dn") schedule = namSchedule[homqua] || [];
+    if (loai === "dt") schedule = trungSchedule[selectedDay] || [];
+    if (loai === "dn") schedule = namSchedule[selectedDay] || [];
 
     const layMaTinh = schedule.slice(0, soLuong);
     const tinhTuMa = [...trungTowns, ...namTowns].filter((t) =>
