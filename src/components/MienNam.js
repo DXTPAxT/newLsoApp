@@ -61,7 +61,7 @@ function MienNam() {
   const todayTowns = namTowns.filter((t) => todayTownCodes.includes(t.code));
 
   useEffect(() => {
-    const fetchAll = async (retryCount = 5) => {
+    const fetchAll = async (retryCount = 10) => {
       const validResults = [];
 
       for (let town of todayTowns) {

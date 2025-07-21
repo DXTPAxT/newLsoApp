@@ -49,7 +49,7 @@ function MienTrung() {
   const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
 
   useEffect(() => {
-    const fetchAll = async (retryCount = 5) => {
+    const fetchAll = async (retryCount = 10) => {
       const validResults = [];
       const weekday = dayjs().format("dddd");
       const previousWeekday = dayjs().subtract(1, "day").format("dddd");

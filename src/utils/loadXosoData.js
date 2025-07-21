@@ -46,11 +46,11 @@ const namTowns = [
 // Lịch quay cho từng miền
 const trungSchedule = {
   Sunday: ["kotu", "khho", "thth"], // Kon Tum - Khánh Hòa - Thừa Thiên Huế (Ktum - Khoa) ✔
-  Monday: ["phye", "thhu"],         // Phú Yên - Huế (Pyen - Hue) ✔
-  Tuesday: ["dakl", "quna"],        // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
-  Wednesday: ["dana", "khho"],      // Đà Nẵng - Khánh Hòa (Dnang - Khoa) ✔
+  Monday: ["phye", "thhu"], // Phú Yên - Huế (Pyen - Hue) ✔
+  Tuesday: ["dakl", "quna"], // Đắk Lắk - Quảng Nam (Dlak - Qnam) ✔
+  Wednesday: ["dana", "khho"], // Đà Nẵng - Khánh Hòa (Dnang - Khoa) ✔
   Thursday: ["bidi", "qutr", "qubi"], // Bình Định - Quảng Trị - Quảng Bình (Bdinh - Qtri) ✔
-  Friday: ["gila", "nith"],         // Gia Lai - Ninh Thuận (Glai - Nthuan) ✔
+  Friday: ["gila", "nith"], // Gia Lai - Ninh Thuận (Glai - Nthuan) ✔
   Saturday: ["dana", "qung", "dano"], // Đà Nẵng - Quảng Ngãi - Đắk Nông (Dnang - Qngai) ✔
 };
 
@@ -64,11 +64,9 @@ const namSchedule = {
   Saturday: ["tphc", "loan", "biph", "hagi"], // TPHCM - Long An - Bình Phước - Hậu Giang (Tpho - Lan) ✔
 };
 
-export async function loadAllXosoResults() {
+export async function loadAllXosoResults(retryCount = 10) {
   const today = dayjs().format("DD/MM/YYYY");
-  const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
   const dayName = dayjs().format("dddd");
-  const yesterdayName = dayjs().subtract(1, "day").format("dddd");
 
   const provincesToCheck = [];
 
@@ -90,17 +88,33 @@ export async function loadAllXosoResults() {
   const allResults = [];
 
   for (let p of provincesToCheck) {
-    try {
-      const res = await axios.get(
-        `https://xoso188.net/api/front/open/lottery/history/list/5/${p.code}`
-      );
-      const list = res.data?.t?.issueList || [];
-      const found = list.find((item) => item.turnNum === today);
-      if (found) {
-        allResults.push({ province: p.name, data: found });
+    let attempts = 0;
+    let success = false;
+
+    while (attempts < retryCount && !success) {
+      try {
+        const res = await axios.get(
+          `https://xoso188.net/api/front/open/lottery/history/list/5/${p.code}`
+        );
+        const list = res.data?.t?.issueList || [];
+        const found = list.find((item) => item.turnNum === today);
+        if (found) {
+          allResults.push({ province: p.name, data: found });
+          success = true;
+        } else {
+          attempts++;
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      } catch (e) {
+        attempts++;
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
-    } catch (e) {
-      console.error("Lỗi fetch", p.code, e.message);
+    }
+
+    if (!success) {
+      console.warn(
+        `❌ Không thể tải kết quả cho ${p.name} sau ${retryCount} lần thử.`
+      );
     }
   }
 

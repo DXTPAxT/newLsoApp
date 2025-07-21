@@ -241,7 +241,7 @@ function App() {
             var ketqua;
             // console.log(danhsachdai});
 
-            if (kieudanh.startsWith("bao")) {
+            if (kieudanh.startsWith("b")) {
               if (dodaimadanh === 2) {
                 ketqua = tinhKetQuaTrungThuongMotKieu(
                   "bao",
@@ -500,9 +500,19 @@ function App() {
       </div>
 
       <div
-        className="ketquaView"
-        style={{ margin: "20px 0", fontSize: "18px" }}
-      ></div>
+        style={{
+          maxWidth: "600px",
+          maxHeight: "400px",
+          overflow: "auto",
+          border: "1px solid #ccc",
+          padding: "10px",
+        }}
+      >
+        <div
+          className="ketquaView"
+          style={{ margin: "20px 0", fontSize: "20px" }}
+        ></div>
+      </div>
 
       <div className="nhapdonGroup">
         <div className="nhapdonbox">

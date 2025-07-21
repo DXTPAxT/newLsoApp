@@ -31,7 +31,7 @@ function MienBac() {
   useEffect(() => {
     let isMounted = true;
 
-    const fetchData = async (retryCount = 5) => {
+    const fetchData = async (retryCount = 10) => {
       let attempts = 0;
       let success = false;
 
