@@ -57,7 +57,7 @@ export function tinhKetQuaTrungThuongMotKieu(
   const giai8 = [];
   const provinces = Array.isArray(provinceList) ? provinceList : [provinceList];
 
-  console.log(provinces);
+  // console.log(provinces);
   // console.log(allResults);
 
   for (const provinceName of provinces) {
@@ -131,7 +131,7 @@ export function tinhKetQuaTrungThuongMotKieu(
       }
     }
   } else if (kieuDanh.startsWith("dd")) {
-    console.log(`Tính giải Đuôi với số:`, soDanhArr);
+    // console.log(`Tính giải Đuôi với số:`, soDanhArr);
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [...giai7] : [...giai8];
       if (giaiCheck.some((g) => (g + "").startsWith(so))) {

@@ -188,7 +188,7 @@ function App() {
         } else if (sodai != 0 && lines[i] != "") {
           luotdanh = lines[i];
           const kieuDanhPattern =
-            /(bdao|xdao|bao|dax|da\d*x?|da|dau|duoi|dui|dd|x|b)/;
+            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d+([.,]\d+)?)/g;
           const match = luotdanh.match(kieuDanhPattern);
 
           let madanh = "";
@@ -222,21 +222,28 @@ function App() {
           }
 
           // Tách các kiểu đánh còn lại
-          const pattern = /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)\d*/g;
+          const pattern =
+            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d+([.,]\d+)?)/g;
           const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
 
           // thông báo treo máy
           if (counter == max) {
             alert("Bị lỗi, hãy thử lại.");
           }
+
           console.log(cacKieuDanh);
           console.log(dai);
           tongtien += tinhtongtien(dai, madanh, cacKieuDanh, sodai);
+          console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
+          console.log(tongtien);
 
           // tính kết quả trúng thưởng
           var dodaimadanh = madanh.split(".")[0].length;
           for (var kieudanh of cacKieuDanh) {
-            var heso = kieudanh.replace(/[a-z]/gi, "");
+            var matchHeSo = kieudanh.match(/\d+([.,]\d+)?/);
+            var heso = matchHeSo
+              ? parseFloat(matchHeSo[0].replace(",", "."))
+              : 1;
             var danhsachdai = tachDanhSachTinhThanh(dai, madais, tendais);
             var ketqua;
             // console.log(danhsachdai});

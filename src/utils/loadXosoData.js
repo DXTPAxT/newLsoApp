@@ -75,7 +75,7 @@ export async function loadAllXosoResults(retryCount = 10) {
 
   // Miền Trung quay theo lịch
   const trungTodayCodes = trungSchedule[dayName] || [];
-  console.log(trungTodayCodes);
+  // console.log(trungTodayCodes);
   provincesToCheck.push(
     ...trungTowns.filter((p) => trungTodayCodes.includes(p.code))
   );
