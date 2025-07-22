@@ -49,13 +49,13 @@ export function tinhKetQuaTrungThuongMotKieu(
   ];
 
   let tong = 0;
-  let mien = "Không xác định";
   const tatCaSo = [];
   const giaiDB = [];
   const giai6 = [];
   const giai7 = [];
   const giai8 = [];
   const provinces = Array.isArray(provinceList) ? provinceList : [provinceList];
+  let mien = xacDinhMien(provinces);
   const soTrungArr = [];
 
   // console.log(provinces);
@@ -111,7 +111,7 @@ export function tinhKetQuaTrungThuongMotKieu(
   // console.log("Toàn bộ số:", tatCaSo);
 
   const soDanhArr = maDanh.split(".");
-  const isBac = xacDinhMien(provinces) === "Miền Bắc";
+  const isBac = mien === "Miền Bắc";
 
   if (kieuDanh.startsWith("bao") && soDanhArr[0].length === 2) {
     for (const so of soDanhArr) {
@@ -137,8 +137,8 @@ export function tinhKetQuaTrungThuongMotKieu(
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [...giai7] : [...giai8];
       const count = giaiCheck.filter((g) => (g + "").startsWith(so)).length;
-      console.log(giai7);
-      console.log(giaiCheck);
+      // console.log(giai7);
+      // console.log(giaiCheck);
       if (count > 0) {
         tong += count * 76;
         for (let i = 0; i < count; i++) {
