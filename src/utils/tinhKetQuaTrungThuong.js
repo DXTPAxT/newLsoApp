@@ -115,58 +115,77 @@ export function tinhKetQuaTrungThuongMotKieu(
 
   if (kieuDanh.startsWith("bao") && soDanhArr[0].length === 2) {
     for (const so of soDanhArr) {
-      if (tatCaSo.some((trung) => trung.endsWith(so))) {
-        tong += 76;
-        soTrungArr.push(so);
+      const count = tatCaSo.filter((trung) => trung.endsWith(so)).length;
+      if (count > 0) {
+        tong += count * 76;
+        for (let i = 0; i < count; i++) {
+          soTrungArr.push(so);
+        }
       }
     }
   } else if (kieuDanh.startsWith("bao") && soDanhArr[0].length === 3) {
     for (const so of soDanhArr) {
-      if (tatCaSo.some((trung) => trung.endsWith(so))) {
-        tong += 660;
-        soTrungArr.push(so);
+      const count = tatCaSo.filter((trung) => trung.endsWith(so)).length;
+      if (count > 0) {
+        tong += count * 660;
+        for (let i = 0; i < count; i++) {
+          soTrungArr.push(so);
+        }
       }
     }
   } else if (kieuDanh.startsWith("dau")) {
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [...giai7] : [...giai8];
-      if (giaiCheck.some((g) => (g + "").startsWith(so))) {
-        tong += 76;
-        soTrungArr.push(so);
+      const count = giaiCheck.filter((g) => (g + "").startsWith(so)).length;
+      if (count > 0) {
+        tong += count * 76;
+        for (let i = 0; i < count; i++) {
+          soTrungArr.push(so);
+        }
       }
     }
   } else if (kieuDanh.startsWith("duoi") || kieuDanh.startsWith("dui")) {
-    console.log(`Tính giải Đuôi với số:`, soDanhArr);
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [...giaiDB] : [...giaiDB];
-      if (giaiCheck.some((g) => (g + "").endsWith(so))) {
-        tong += 76;
-        soTrungArr.push(so);
+      const count = giaiCheck.filter((g) => (g + "").endsWith(so)).length;
+      if (count > 0) {
+        tong += count * 76;
+        for (let i = 0; i < count; i++) {
+          soTrungArr.push(so);
+        }
       }
     }
   } else if (kieuDanh.startsWith("dd")) {
-    // console.log(`Tính giải Đuôi với số:`, soDanhArr);
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [...giai7] : [...giai8];
-      if (giaiCheck.some((g) => (g + "").startsWith(so))) {
-        tong += 76;
-        soTrungArr.push(so);
+      const count = giaiCheck.filter((g) => (g + "").startsWith(so)).length;
+      if (count > 0) {
+        tong += count * 76;
+        for (let i = 0; i < count; i++) {
+          soTrungArr.push(`${so} (đầu)`);
+        }
       }
     }
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [...giaiDB] : [...giaiDB];
-      if (giaiCheck.some((g) => (g + "").endsWith(so))) {
-        tong += 76;
-        soTrungArr.push(so);
+      const count = giaiCheck.filter((g) => (g + "").endsWith(so)).length;
+      if (count > 0) {
+        tong += count * 76;
+        for (let i = 0; i < count; i++) {
+          soTrungArr.push(`${so} (đuôi)`);
+        }
       }
     }
   } else if (kieuDanh.startsWith("xdao") || kieuDanh.startsWith("x")) {
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [giaiDB, ...giai6] : [giaiDB, giai7];
-      // console.log(giaiCheck);
-      if (giaiCheck.some((g) => (g + "").endsWith(so))) {
-        tong += 660;
-        soTrungArr.push(so);
+      const flatGiai = giaiCheck.flat(); // nếu có mảng lồng
+      const count = flatGiai.filter((g) => (g + "").endsWith(so)).length;
+      if (count > 0) {
+        tong += count * 660;
+        for (let i = 0; i < count; i++) {
+          soTrungArr.push(so);
+        }
       }
     }
   } else if (kieuDanh.startsWith("da")) {
@@ -205,12 +224,15 @@ export function tinhKetQuaTrungThuongMotKieu(
           for (let j = i + 1; j < soDaXet.length; j++) {
             const a = soDaXet[i];
             const b = soDaXet[j];
-            const trungA = tatCaSo.some((g) => g.endsWith(a));
-            const trungB = tatCaSo.some((g) => g.endsWith(b));
-            if (trungA && trungB) {
-              tong += tienDa;
-              const cap = [a, b].join(" "); // giữ định dạng cặp theo thứ tự
-              if (!soTrungArr.includes(cap)) soTrungArr.push(cap);
+            const countA = tatCaSo.filter((g) => g.endsWith(a)).length;
+            const countB = tatCaSo.filter((g) => g.endsWith(b)).length;
+            const soLanTrungCap = Math.min(countA, countB);
+
+            if (soLanTrungCap > 0) {
+              tong += tienDa * soLanTrungCap;
+              for (let k = 0; k < soLanTrungCap; k++) {
+                soTrungArr.push(`${a} ${b}`);
+              }
             }
           }
         }
