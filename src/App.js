@@ -190,7 +190,7 @@ function App() {
         } else if (sodai != 0 && lines[i] != "") {
           luotdanh = lines[i];
           const kieuDanhPattern =
-            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d*[a-z]*\d*)/gi;
+            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d+(?:[.,]\d+)?)/i;
           const match = luotdanh.match(kieuDanhPattern);
 
           let madanh = "";
@@ -211,16 +211,19 @@ function App() {
           // console.log(madanh);
 
           // Tách các kiểu đánh còn lại
+          // Tách các kiểu đánh chính xác
           const pattern =
-            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d*[a-z]*\d*)/gi;
-          const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
+            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d+(?:[.,]\d+)?)/gi;
+          const cacKieuDanh = Array.from(
+            luotdanhPhanConLai.matchAll(pattern)
+          ).map((m) => `${m[1]}${m[2]}`);
 
           // thông báo treo máy
           if (counter == max) {
             alert("Bị lỗi, hãy thử lại.");
           }
 
-          // console.log(cacKieuDanh);
+          console.log(cacKieuDanh);
           // console.log(dai);
           tongtien += tinhtongtien(dai, madanh, cacKieuDanh, sodai);
           // console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
@@ -243,7 +246,7 @@ function App() {
 
             // console.log("");
             // console.log(danhsachdai);
-            // console.log(madanh);
+            console.log(madanh);
             // console.log(kieudanh);
             // console.log(heso);
 
