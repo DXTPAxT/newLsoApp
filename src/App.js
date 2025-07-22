@@ -190,7 +190,7 @@ function App() {
         } else if (sodai != 0 && lines[i] != "") {
           luotdanh = lines[i];
           const kieuDanhPattern =
-            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d*[a-z]*\d*)/gi
+            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d*[a-z]*\d*)/gi;
           const match = luotdanh.match(kieuDanhPattern);
 
           let madanh = "";
@@ -206,26 +206,13 @@ function App() {
 
           // Xử lý trường hợp "keo" với start–end bất kỳ
           if (madanh.includes("keo")) {
-            const match = madanh.match(/(\d*)keo(\d+)/);
-            if (match) {
-              const [_, startStr, endStr] = match;
-
-              const start = parseInt(startStr || "0", 10); // mặc định start là 0 nếu không có
-              const end = parseInt(endStr, 10);
-
-              const digitLength = Math.max(startStr.length, endStr.length); // để giữ định dạng chuẩn
-              const generated = [];
-              for (let i = start; i <= end; i++) {
-                generated.push(i.toString().padStart(digitLength, "0"));
-              }
-
-              madanh = generated.join(".");
-            }
+            madanh = expandKeo(madanh);
           }
+          // console.log(madanh);
 
           // Tách các kiểu đánh còn lại
           const pattern =
-            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d*[a-z]*\d*)/gi
+            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d*[a-z]*\d*)/gi;
           const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
 
           // thông báo treo máy
@@ -521,6 +508,60 @@ function App() {
   const handleChange = (e) => {
     setSelectedDate(e.target.value);
   };
+
+  function expandKeo(madanh) {
+    const match = madanh.match(/(\d+)keo(\d+)/i);
+    if (!match) return madanh;
+
+    const [_, startStr, endStr] = match;
+    const digitLength = Math.max(startStr.length, endStr.length);
+
+    // Nếu giống chữ số đầu → kéo theo hàng nhỏ hơn
+    if (startStr[0] === endStr[0]) {
+      // tìm phần khác nhau
+      let splitIndex = 0;
+      while (
+        splitIndex < startStr.length &&
+        splitIndex < endStr.length &&
+        startStr[splitIndex] === endStr[splitIndex]
+      ) {
+        splitIndex++;
+      }
+
+      const prefix = startStr.slice(0, splitIndex);
+      const from = parseInt(startStr.slice(splitIndex), 10);
+      const to = parseInt(endStr.slice(splitIndex), 10);
+      const suffixLength = startStr.length - splitIndex;
+
+      const results = [];
+      for (let i = from; i <= to; i++) {
+        const suffix = i.toString().padStart(suffixLength, "0");
+        results.push(prefix + suffix);
+      }
+      return results.join(".");
+    }
+
+    // nếu khác hoàn toàn → chỉ kéo hàng trăm
+    if (digitLength === 3) {
+      const from = parseInt(startStr, 10);
+      const to = parseInt(endStr, 10);
+
+      const results = [];
+      for (let i = from; i <= to; i += 100) {
+        results.push(i.toString().padStart(digitLength, "0"));
+      }
+      return results.join(".");
+    }
+
+    // trường hợp còn lại cứ kéo bình thường
+    const from = parseInt(startStr, 10);
+    const to = parseInt(endStr, 10);
+    const results = [];
+    for (let i = from; i <= to; i++) {
+      results.push(i.toString().padStart(digitLength, "0"));
+    }
+    return results.join(".");
+  }
 
   return (
     <div style={{ padding: "20px" }}>
