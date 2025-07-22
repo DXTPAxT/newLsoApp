@@ -46,6 +46,7 @@ function dax(dai, luotdanhArr, sodai) {
   var hesoma = 0;
   var madanh = luotdanhArr[0].split(".");
   var tongtien = 0;
+  console.log(madanh);
   for (var i = 0; i < madanh.length; i++) {
     if (madanh[i] === "") continue;
     if (madanh[i].length === 4) hesoma = dai === "hn" ? 67.5 : 45;
@@ -162,7 +163,7 @@ export function tinhtongtien(dai, maDanh, cacKieuDanh, sodai) {
     danhSachSo.forEach((so) => {
       const luotdanhArr = [so, soTienStr];
 
-      if (/^da\d*x$/.test(kieudanh)) {
+      if (/^da\d+(?:,\d+)?x$/.test(kieudanh)) {
         tongtien += dax(dai, luotdanhArr, sodai);
       } else if (
         kieudanh.includes("da") &&

@@ -189,9 +189,9 @@ function App() {
           // cộng từng lượt đánh
         } else if (sodai != 0 && lines[i] != "") {
           luotdanh = lines[i];
-          const kieuDanhPattern =
-            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d+(?:[.,]\d+)?)/i;
-          const match = luotdanh.match(kieuDanhPattern);
+
+          const pattern = /(da\d+(?:,\d+)?x)|(bdao|xdao|bao|duoi|dui|dau|dd|da|b|x)\d+(?:,\d+)?/gi;
+          const match = luotdanh.match(pattern);
 
           let madanh = "";
           let luotdanhPhanConLai = "";
@@ -208,15 +208,9 @@ function App() {
           if (madanh.includes("keo")) {
             madanh = expandKeo(madanh);
           }
-          // console.log(madanh);
 
-          // Tách các kiểu đánh còn lại
-          // Tách các kiểu đánh chính xác
-          const pattern =
-            /(bdao|xdao|bao|dao|dau|da|duoi|dui|dd|x|b)(\d+(?:[.,]\d+)?)/gi;
-          const cacKieuDanh = Array.from(
-            luotdanhPhanConLai.matchAll(pattern)
-          ).map((m) => `${m[1]}${m[2]}`);
+          // Tách các kiểu đánh còn lại (lại dùng regex mới)
+          const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
 
           // thông báo treo máy
           if (counter == max) {
@@ -224,10 +218,12 @@ function App() {
           }
 
           console.log(cacKieuDanh);
-          // console.log(dai);
+          console.log(dai);
+          console.log(madanh);
           tongtien += tinhtongtien(dai, madanh, cacKieuDanh, sodai);
-          // console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
-          // console.log(tongtien);
+          console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
+          console.log(tongtien);
+          console.log(`==============`);
 
           // tính kết quả trúng thưởng
           var dodaimadanh = madanh.split(".")[0].length;
@@ -246,7 +242,7 @@ function App() {
 
             // console.log("");
             // console.log(danhsachdai);
-            console.log(madanh);
+            // console.log(madanh);
             // console.log(kieudanh);
             // console.log(heso);
 
@@ -484,6 +480,40 @@ function App() {
             (tongTienTheoKieuMnMt.daMotDai * daMotDai) / 750
           )}</td>
         </tr>
+        <tr>
+          <td>Tổng</td>
+          <td>${formatTien(
+            (tongTienTheoKieuMb.bao2so * bao2Input) / 76 +
+              (tongTienTheoKieuMb.bao3so * bao3Input) / 660 +
+              (tongTienTheoKieuMb.xiuChu * xiuchuInput) / 660 +
+              (tongTienTheoKieuMb.dauDuoi * ddInput) / 76 +
+              (tongTienTheoKieuMb.da * daInputBac) / 660
+          )}</td>
+          <td>${formatTien(
+            (tongTienTheoKieuMnMt.bao2so * bao2Input) / 76 +
+              (tongTienTheoKieuMnMt.bao3so * bao3Input) / 660 +
+              (tongTienTheoKieuMnMt.xiuChu * xiuchuInput) / 660 +
+              (tongTienTheoKieuMnMt.dauDuoi * ddInput) / 76 +
+              (tongTienTheoKieuMnMt.da * daInputTrung) / 560 +
+              (tongTienTheoKieuMnMt.daMotDai * daMotDai) / 750
+          )}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td colspan="2">${formatTien(
+            (tongTienTheoKieuMb.bao2so * bao2Input) / 76 +
+              (tongTienTheoKieuMb.bao3so * bao3Input) / 660 +
+              (tongTienTheoKieuMb.xiuChu * xiuchuInput) / 660 +
+              (tongTienTheoKieuMb.dauDuoi * ddInput) / 76 +
+              (tongTienTheoKieuMb.da * daInputBac) / 660 +
+              (tongTienTheoKieuMnMt.bao2so * bao2Input) / 76 +
+              (tongTienTheoKieuMnMt.bao3so * bao3Input) / 660 +
+              (tongTienTheoKieuMnMt.xiuChu * xiuchuInput) / 660 +
+              (tongTienTheoKieuMnMt.dauDuoi * ddInput) / 76 +
+              (tongTienTheoKieuMnMt.da * daInputTrung) / 560 +
+              (tongTienTheoKieuMnMt.daMotDai * daMotDai) / 750
+          )}</td>
+        </tr>
       </tbody>
     </table>
   `;
@@ -628,6 +658,7 @@ function App() {
           <textarea
             className="nhapdontext"
             placeholder="Nhập đơn ở đây..."
+            style={{ fontSize: "20px" }}
           ></textarea>
         </div>
         <div className="tongbox">
