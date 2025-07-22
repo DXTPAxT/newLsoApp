@@ -50,6 +50,7 @@ export function tinhKetQuaTrungThuongMotKieu(
 
   let tong = 0;
   const tatCaSo = [];
+  const soTheoDai = []; // Mỗi phần tử: { dai: "Tên đài", so: "12345" }
   const giaiDB = [];
   const giai6 = [];
   const giai7 = [];
@@ -91,12 +92,16 @@ export function tinhKetQuaTrungThuongMotKieu(
           if (giai.includes(",")) {
             const giaiN = giai.split(",").map((x) => x.trim());
             tatCaSo.push(...giaiN);
+            soTheoDai.push(
+              ...giaiN.map((so) => ({ dai: realProvinceName, so }))
+            );
 
             // Gom riêng giải 6 và 7
             if (idx === 6) giai6.push(...giaiN); // g6
             if (idx === 7) giai7.push(...giaiN); // g7
           } else {
             tatCaSo.push(giai);
+            soTheoDai.push({ dai: realProvinceName, so: giai });
             if (idx === 8) giai8.push(giai); // g8
             if (idx === 7) giai7.push(giai); // g7
             if (idx === 0) giaiDB.push(giai); // g0
@@ -192,54 +197,76 @@ export function tinhKetQuaTrungThuongMotKieu(
     }
   } else if (kieuDanh.startsWith("da")) {
     let round = parseInt(kieuDanh.replace("da", ""));
+    if (isNaN(round)) round = 2;
+
     const soDai = provinces.length;
-    if (isNaN(round)) round = 2; // Nếu không có số => mặc định là 2
-
-    if (round >= 2) {
-      let tienDa = 0;
-      // console.log(soDai);
-      if (soDai === 1) {
-        tienDa = mien === "Miền Bắc" ? 660 : 750;
-      } else {
-        tienDa = mien === "Miền Bắc" ? 660 : 560;
-      }
-      // console.log(tienDa);
-
-      // B1: Tách từng cặp 2 số từ maDanh (VD: "4500" => ["45", "00"])
-      maDanh.split(".").forEach((str) => {
-        // console.log(`Tách cặp số từ maDanh: ${str}`);
-        const soDanhArr = [];
-        for (let i = 0; i + 1 < str.length; i += 2) {
-          soDanhArr.push(str.substring(i, i + 2));
-        }
-        // console.log(`Các cặp số tách được:`, soDanhArr);
-        // console.log(round);
-        // console.log(tatCaSo);
-        // console.log("=======");
-
-        // B2: Lấy theo round, nhưng không vượt quá độ dài mảng
-        const soCanLay = Math.min(round, soDanhArr.length);
-        const soDaXet = soDanhArr.slice(0, soCanLay);
-
-        // B3: Tạo các cặp và kiểm tra trúng cả hai số trong một cặp
-        for (let i = 0; i < soDaXet.length - 1; i++) {
-          for (let j = i + 1; j < soDaXet.length; j++) {
-            const a = soDaXet[i];
-            const b = soDaXet[j];
-            const countA = tatCaSo.filter((g) => g.endsWith(a)).length;
-            const countB = tatCaSo.filter((g) => g.endsWith(b)).length;
-            const soLanTrungCap = Math.min(countA, countB);
-
-            if (soLanTrungCap > 0) {
-              tong += tienDa * soLanTrungCap;
-              for (let k = 0; k < soLanTrungCap; k++) {
-                soTrungArr.push(`${a} ${b}`);
-              }
-            }
-          }
-        }
-      });
+    let tienDa = 0;
+    if (soDai === 1) {
+      tienDa = mien === "Miền Bắc" ? 660 : 750;
+    } else {
+      tienDa = mien === "Miền Bắc" ? 660 : 560;
     }
+
+    // Gom số theo đài từ soTheoDai
+    const soTheoDaiMap = {};
+    soTheoDai.forEach(({ dai, so }) => {
+      if (!soTheoDaiMap[dai]) soTheoDaiMap[dai] = [];
+      soTheoDaiMap[dai].push(so);
+    });
+
+    // Danh sách tổ hợp đài (2 chiều)
+    const daiList = Object.keys(soTheoDaiMap);
+    const toHopDai = [];
+    for (let i = 0; i < daiList.length; i++) {
+      for (let j = i + 1; j < daiList.length; j++) {
+        toHopDai.push([daiList[i], daiList[j]]);
+      }
+    }
+
+    // Tách từng cặp số từ maDanh
+    maDanh.split(".").forEach((str) => {
+      const soDanhArr = [];
+      for (let i = 0; i + 1 < str.length; i += 2) {
+        soDanhArr.push(str.substring(i, i + 2));
+      }
+
+      const soCanLay = Math.min(round, soDanhArr.length);
+      const soDaXet = soDanhArr.slice(0, soCanLay);
+
+      // Tạo danh sách các cặp số từ soDaXet
+      for (let i = 0; i < soDaXet.length - 1; i++) {
+        for (let j = i + 1; j < soDaXet.length; j++) {
+          const a = soDaXet[i];
+          const b = soDaXet[j];
+
+          // Tìm tất cả nơi xuất hiện của số a và b
+          const aDaiArr = soTheoDai.filter((x) => x.so.endsWith(a));
+          const bDaiArr = soTheoDai.filter((x) => x.so.endsWith(b));
+
+          // Duyệt tất cả tổ hợp (a, b)
+          aDaiArr.forEach((aObj) => {
+            bDaiArr.forEach((bObj) => {
+              const daiA = aObj.dai;
+              const daiB = bObj.dai;
+
+              if (daiA === daiB) {
+                // Nếu cả 2 số cùng 1 đài → tính cho tất cả tổ hợp đài
+                toHopDai.forEach(([d1, d2]) => {
+                  if (d1 === daiA || d2 === daiA) {
+                    tong += tienDa;
+                    soTrungArr.push(`${a} ${b} (${d1} - ${d2})`);
+                  }
+                });
+              } else {
+                // Nếu khác đài → chỉ tính 1 lần
+                tong += tienDa;
+                soTrungArr.push(`${a} ${b} (${daiA} - ${daiB})`);
+              }
+            });
+          });
+        }
+      }
+    });
   }
 
   function xacDinhMien(provinceNames) {

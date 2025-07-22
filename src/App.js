@@ -217,13 +217,13 @@ function App() {
             alert("Bị lỗi, hãy thử lại.");
           }
 
-          console.log(cacKieuDanh);
-          console.log(dai);
-          console.log(madanh);
+          // console.log(cacKieuDanh);
+          // console.log(dai);
+          // console.log(madanh);
           tongtien += tinhtongtien(dai, madanh, cacKieuDanh, sodai);
-          console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
-          console.log(tongtien);
-          console.log(`==============`);
+          // console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
+          // console.log(tongtien);
+          // console.log(`==============`);
 
           // tính kết quả trúng thưởng
           var dodaimadanh = madanh.split(".")[0].length;
