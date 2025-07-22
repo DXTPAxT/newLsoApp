@@ -243,8 +243,8 @@ function App() {
 
             // console.log("");
             // console.log(danhsachdai);
-            console.log(madanh);
-            console.log(kieudanh);
+            // console.log(madanh);
+            // console.log(kieudanh);
             // console.log(heso);
 
             if (kieudanh.startsWith("b")) {
