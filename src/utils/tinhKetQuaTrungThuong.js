@@ -207,7 +207,6 @@ export function tinhKetQuaTrungThuongMotKieu(
       tienDa = mien === "Miền Bắc" ? 660 : 560;
     }
 
-    // Gom số trúng có trong kết quả thành mảng {so, dai}
     const soTrungRaw = [];
 
     maDanh.split(".").forEach((str) => {
@@ -238,36 +237,42 @@ export function tinhKetQuaTrungThuongMotKieu(
       }
     }
 
-    // Duyệt tạo cặp
     for (let i = 0; i < soTrungRaw.length; i++) {
       if (soTrungDaDung[i]) continue;
       const a = soTrungRaw[i];
+
       for (let j = i + 1; j < soTrungRaw.length; j++) {
         if (soTrungDaDung[j]) continue;
         const b = soTrungRaw[j];
 
-        if (a.so === b.so) continue; // tránh trùng chính số
+        if (a.so === b.so) continue;
 
         if (a.dai === b.dai) {
-          // cùng đài → push 2 lần (d1-d2, d1-d3, v.v.)
-          toHopDai.forEach(([d1, d2]) => {
-            if (d1 === a.dai || d2 === a.dai) {
-              tong += tienDa;
-              soTrungArr.push(`${a.so} ${b.so} (${d1} - ${d2})`);
-            }
-          });
+          // Cùng đài
+          if (soDai === 1) {
+            // Chỉ 1 đài: chỉ push số, không tên đài
+            tong += tienDa;
+            soTrungArr.push(`${a.so} ${b.so}`);
+          } else {
+            // Nhiều đài: push nhiều lần theo tổ hợp đài liên quan
+            toHopDai.forEach(([d1, d2]) => {
+              if (d1 === a.dai || d2 === a.dai) {
+                tong += tienDa;
+                soTrungArr.push(`${a.so} ${b.so} (${d1} - ${d2})`);
+              }
+            });
+          }
         } else {
-          // khác đài → chỉ push 1 lần
+          // Khác đài: push 1 lần
           const dMin = a.dai < b.dai ? a.dai : b.dai;
           const dMax = a.dai > b.dai ? a.dai : b.dai;
           tong += tienDa;
           soTrungArr.push(`${a.so} ${b.so} (${dMin} - ${dMax})`);
         }
 
-        // Đánh dấu đã dùng
         soTrungDaDung[i] = true;
         soTrungDaDung[j] = true;
-        break; // Sau khi ghép a với b, thoát ra để tiếp số khác
+        break;
       }
     }
   }
