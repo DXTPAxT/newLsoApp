@@ -32,6 +32,15 @@ function MienBac({ selectedDate }) {
   useEffect(() => {
     let isMounted = true;
 
+    const currentHour = dayjs().hour();
+    const isToday = selectedDate !== "yesterday";
+
+    if (isToday && currentHour < 18) {
+      setError("Chưa có kết quả hôm nay");
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async (retryCount = 10) => {
       let attempts = 0;
       let success = false;

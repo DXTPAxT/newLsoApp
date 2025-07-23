@@ -63,6 +63,15 @@ function MienNam({ selectedDate }) {
   const todayTowns = namTowns.filter((t) => todayTownCodes.includes(t.code));
 
   useEffect(() => {
+    const currentHour = dayjs().hour();
+    const isToday = selectedDate !== "yesterday";
+
+    if (isToday && currentHour < 16) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+
     const fetchAll = async (retryCount = 10) => {
       const validResults = [];
 
@@ -83,11 +92,11 @@ function MienNam({ selectedDate }) {
               success = true;
             } else {
               attempts++;
-              await new Promise((resolve) => setTimeout(resolve, 1000)); // chờ 5s rồi thử lại
+              await new Promise((resolve) => setTimeout(resolve, 1000));
             }
           } catch (err) {
             attempts++;
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // lỗi thì chờ 5s rồi thử lại
+            await new Promise((resolve) => setTimeout(resolve, 1000));
           }
         }
       }
@@ -111,7 +120,9 @@ function MienNam({ selectedDate }) {
 
   return (
     <div>
-      <h2 style={{ textAlign: "center" }}>Kết quả xổ số Miền Nam - {selectDate}</h2>
+      <h2 style={{ textAlign: "center" }}>
+        Kết quả xổ số Miền Nam - {selectDate}
+      </h2>
       <div style={{ overflowX: "auto" }}>
         <table
           border="1"

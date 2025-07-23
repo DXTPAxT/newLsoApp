@@ -50,11 +50,21 @@ function MienTrung({ selectedDate }) {
   const selectDate = selectedDate === "yesterday" ? yesterday : today;
 
   useEffect(() => {
+    const currentHour = dayjs().hour();
+    const isToday = selectedDate !== "yesterday";
+
+    if (isToday && currentHour < 17) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+
     const fetchAll = async (retryCount = 10) => {
       const validResults = [];
       const weekday = dayjs().format("dddd");
       const previousWeekday = dayjs().subtract(1, "day").format("dddd");
-      const selectWeekday = selectedDate === "yesterday" ? previousWeekday : weekday;
+      const selectWeekday =
+        selectedDate === "yesterday" ? previousWeekday : weekday;
       const todayTownCodes = todayTowns[selectWeekday] || [];
 
       const todayTownList = trungTowns.filter((town) =>
@@ -106,7 +116,11 @@ function MienTrung({ selectedDate }) {
   if (loading) return <p>Đang tải kết quả miền Trung...</p>;
 
   if (results.length === 0) {
-    return <p style={{ color: "red" }}>Chưa có kết quả miền Trung ngày {selectDate}.</p>;
+    return (
+      <p style={{ color: "red" }}>
+        Chưa có kết quả miền Trung ngày {selectDate}.
+      </p>
+    );
   }
 
   return (
