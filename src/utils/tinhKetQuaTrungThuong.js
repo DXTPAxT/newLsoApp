@@ -207,23 +207,9 @@ export function tinhKetQuaTrungThuongMotKieu(
       tienDa = mien === "Miền Bắc" ? 660 : 560;
     }
 
-    // Gom số theo đài từ soTheoDai
-    const soTheoDaiMap = {};
-    soTheoDai.forEach(({ dai, so }) => {
-      if (!soTheoDaiMap[dai]) soTheoDaiMap[dai] = [];
-      soTheoDaiMap[dai].push(so);
-    });
+    // Gom số trúng có trong kết quả thành mảng {so, dai}
+    const soTrungRaw = [];
 
-    // Danh sách tổ hợp đài (2 chiều)
-    const daiList = Object.keys(soTheoDaiMap);
-    const toHopDai = [];
-    for (let i = 0; i < daiList.length; i++) {
-      for (let j = i + 1; j < daiList.length; j++) {
-        toHopDai.push([daiList[i], daiList[j]]);
-      }
-    }
-
-    // Tách từng cặp số từ maDanh
     maDanh.split(".").forEach((str) => {
       const soDanhArr = [];
       for (let i = 0; i + 1 < str.length; i += 2) {
@@ -233,40 +219,57 @@ export function tinhKetQuaTrungThuongMotKieu(
       const soCanLay = Math.min(round, soDanhArr.length);
       const soDaXet = soDanhArr.slice(0, soCanLay);
 
-      // Tạo danh sách các cặp số từ soDaXet
-      for (let i = 0; i < soDaXet.length - 1; i++) {
-        for (let j = i + 1; j < soDaXet.length; j++) {
-          const a = soDaXet[i];
-          const b = soDaXet[j];
-
-          // Tìm tất cả nơi xuất hiện của số a và b
-          const aDaiArr = soTheoDai.filter((x) => x.so.endsWith(a));
-          const bDaiArr = soTheoDai.filter((x) => x.so.endsWith(b));
-
-          // Duyệt tất cả tổ hợp (a, b)
-          aDaiArr.forEach((aObj) => {
-            bDaiArr.forEach((bObj) => {
-              const daiA = aObj.dai;
-              const daiB = bObj.dai;
-
-              if (daiA === daiB) {
-                // Nếu cả 2 số cùng 1 đài → tính cho tất cả tổ hợp đài
-                toHopDai.forEach(([d1, d2]) => {
-                  if (d1 === daiA || d2 === daiA) {
-                    tong += tienDa;
-                    soTrungArr.push(`${a} ${b} (${d1} - ${d2})`);
-                  }
-                });
-              } else {
-                // Nếu khác đài → chỉ tính 1 lần
-                tong += tienDa;
-                soTrungArr.push(`${a} ${b} (${daiA} - ${daiB})`);
-              }
-            });
-          });
-        }
-      }
+      soDaXet.forEach((so) => {
+        soTheoDai.forEach(({ dai, so: soKQ }) => {
+          if (soKQ.endsWith(so)) {
+            soTrungRaw.push({ so, dai });
+          }
+        });
+      });
     });
+
+    const soTrungDaDung = new Array(soTrungRaw.length).fill(false);
+    const toHopDai = [];
+
+    const daiList = [...new Set(provinces)];
+    for (let i = 0; i < daiList.length; i++) {
+      for (let j = i + 1; j < daiList.length; j++) {
+        toHopDai.push([daiList[i], daiList[j]]);
+      }
+    }
+
+    // Duyệt tạo cặp
+    for (let i = 0; i < soTrungRaw.length; i++) {
+      if (soTrungDaDung[i]) continue;
+      const a = soTrungRaw[i];
+      for (let j = i + 1; j < soTrungRaw.length; j++) {
+        if (soTrungDaDung[j]) continue;
+        const b = soTrungRaw[j];
+
+        if (a.so === b.so) continue; // tránh trùng chính số
+
+        if (a.dai === b.dai) {
+          // cùng đài → push 2 lần (d1-d2, d1-d3, v.v.)
+          toHopDai.forEach(([d1, d2]) => {
+            if (d1 === a.dai || d2 === a.dai) {
+              tong += tienDa;
+              soTrungArr.push(`${a.so} ${b.so} (${d1} - ${d2})`);
+            }
+          });
+        } else {
+          // khác đài → chỉ push 1 lần
+          const dMin = a.dai < b.dai ? a.dai : b.dai;
+          const dMax = a.dai > b.dai ? a.dai : b.dai;
+          tong += tienDa;
+          soTrungArr.push(`${a.so} ${b.so} (${dMin} - ${dMax})`);
+        }
+
+        // Đánh dấu đã dùng
+        soTrungDaDung[i] = true;
+        soTrungDaDung[j] = true;
+        break; // Sau khi ghép a với b, thoát ra để tiếp số khác
+      }
+    }
   }
 
   function xacDinhMien(provinceNames) {
