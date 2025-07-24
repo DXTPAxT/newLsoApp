@@ -228,7 +228,7 @@ export function tinhKetQuaTrungThuongMotKieu(
         }
       }
     }
-  } else if (kieuDanh.startsWith("da")) {
+  } else if (kieuDanh.startsWith("da") && !kieuDanh.includes("x")) {
     const round = parseInt(kieuDanh.replace("da", "")) || 2;
     const tienDa =
       provinces.length === 1
@@ -362,7 +362,7 @@ export function tinhKetQuaTrungThuongMotKieu(
               }
             }
           }
-          
+
           const used = new Array(soTrungTheoDai.length).fill(false);
           let count = 0;
 
@@ -373,7 +373,11 @@ export function tinhKetQuaTrungThuongMotKieu(
             for (let j = i + 1; j < soTrungTheoDai.length; j++) {
               if (used[j]) continue;
               const pair = [soTrungTheoDai[i], soTrungTheoDai[j]];
-              if (pair.includes(s1) && pair.includes(s2) && soTrungTheoDai[i] !== soTrungTheoDai[j]) {
+              if (
+                pair.includes(s1) &&
+                pair.includes(s2) &&
+                soTrungTheoDai[i] !== soTrungTheoDai[j]
+              ) {
                 used[i] = true;
                 used[j] = true;
                 count++;
@@ -382,10 +386,74 @@ export function tinhKetQuaTrungThuongMotKieu(
             }
           }
 
-          if (count > 0) { 
+          if (count > 0) {
             tong += count * tienDa;
             soTrungArr.push(`${s1} ${s2} (${count})`);
           }
+        }
+      }
+    }
+  } else if (kieuDanh.startsWith("da") && kieuDanh.includes("x")) {
+    const round = parseInt(kieuDanh.replace("da", "")) || 2;
+    const tienDa = mien === "Miền Bắc" ? 700 : 750;
+
+    // Bước 2: Tách maDanh thành mảng cặp số
+    const capSoArr = maDanh.split(".").map((str) => {
+      const numbers = [];
+      for (let i = 0; i + 1 < str.length; i += 2) {
+        numbers.push(str.substring(i, i + 2));
+      }
+
+      const pairs = [];
+      for (let i = 0; i < numbers.length; i++) {
+        for (let j = i + 1; j < numbers.length; j++) {
+          pairs.push([numbers[i], numbers[j]]);
+        }
+      }
+
+      return pairs;
+    });
+
+    // console.log("Đài truyền vào:", provinceList);
+    // console.log("Đài:", provinces);
+    // console.log("Cặp đài:", capDaiArr);
+    // console.log(capSoArr);
+
+    const dai = provinces[0];
+    for (let i = 0; i < capSoArr.length; i++) {
+      const capSoChuaXet = [...capSoArr[i]]; // copy mảng gốc
+      for (let i = 0; i < capSoChuaXet.length; i++) {
+        console.log(`Xét đài: ${dai}`);
+        console.log("Cặp số chưa xét:", capSoChuaXet[i]);
+        const cap = capSoChuaXet[i];
+        console.log(cap);
+        if (cap.length < 2) continue;
+        const [s1, s2] = cap;
+        console.log(`Cặp số: ${s1} - ${s2}`);
+        const soTrungTheoDai = [];
+
+        for (const so of [s1, s2]) {
+          for (const { dai, so: soKQ } of soTheoDai) {
+            if (dai === dai && soKQ.endsWith(so)) {
+              soTrungTheoDai.push(so);
+            }
+          }
+        }
+
+        var count1 = 0;
+        var count2 = 0;
+
+        for (let j = 0; j < soTrungTheoDai.length; j++) {
+          if (soTrungTheoDai[j] === s1) {
+            count1++;
+          } else if (soTrungTheoDai[j] === s2) {
+            count2++;
+          }
+        }
+
+        if (soTrungTheoDai.includes(s1) && soTrungTheoDai.includes(s2)) {
+          tong += (count1 * tienDa + count2 * tienDa) / 2;
+          soTrungArr.push(`${s1}(${count1}) ${s2}(${count2})`);
         }
       }
     }

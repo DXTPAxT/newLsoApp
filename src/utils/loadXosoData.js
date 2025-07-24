@@ -64,7 +64,7 @@ const namSchedule = {
   Saturday: ["tphc", "loan", "biph", "hagi"], // TPHCM - Long An - Bình Phước - Hậu Giang (Tpho - Lan) ✔
 };
 
-export async function loadAllXosoResults(setSelectedDate, retryCount = 10) {
+export async function loadAllXosoResults(setSelectedDate, retryCount = 6) {
   const today = dayjs().format("DD/MM/YYYY");
   const yesterday = dayjs().subtract(1, "day").format("DD/MM/YYYY");
   const selectDate = setSelectedDate === "yesterday" ? yesterday : today;

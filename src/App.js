@@ -609,9 +609,28 @@ function App() {
               // console.log(danhsachdai.length);
               tongTienTheoKieuMnMt.da += parseFloat(ketqua.tong) * heso || 0;
             }
-          } else if (kieudanh.startsWith("da") && danhsachdai.length === 1) {
+          } else if (kieudanh.startsWith("da") && danhsachdai.length === 1 && !kieudanh.includes("x")) {
             ketqua = tinhKetQuaTrungThuongMotKieu(
               "da" + dodaimadanh / 2,
+              madanh,
+              danhsachdai,
+              allResults
+            );
+            if (ketqua.mien === "Miền Bắc") {
+              tongTienTheoKieuMb.da += parseFloat(ketqua.tong) * heso || 0;
+            } else if (
+              ketqua.mien === "Miền Nam" ||
+              ketqua.mien === "Miền Trung"
+            ) {
+              // console.log(danhsachdai.length);
+              if (danhsachdai.length === 1) {
+                tongTienTheoKieuMnMt.daMotDai +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            }
+          } else if (kieudanh.startsWith("da") && danhsachdai.length === 1 && kieudanh.includes("x")) {
+            ketqua = tinhKetQuaTrungThuongMotKieu(
+              "dax" + dodaimadanh / 2,
               madanh,
               danhsachdai,
               allResults
