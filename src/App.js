@@ -430,7 +430,7 @@ function App() {
           // console.log(kieudanh);
           // console.log(heso);
 
-          if (kieudanh.startsWith("b")) {
+          if (kieudanh.startsWith("b") && !kieudanh.startsWith("bdao")) {
             if (dodaimadanh === 2) {
               ketqua = tinhKetQuaTrungThuongMotKieu(
                 "bao",
@@ -466,9 +466,61 @@ function App() {
                   parseFloat(ketqua.tong) * heso || 0;
               }
             }
+          }  else if (kieudanh.startsWith("bdao")) {
+            if (dodaimadanh === 2) {
+              ketqua = tinhKetQuaTrungThuongMotKieu(
+                "bdao",
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.bao2so +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.bao2so +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            } else if (dodaimadanh === 3) {
+              ketqua = tinhKetQuaTrungThuongMotKieu(
+                "bdao",
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.bao3so +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.bao3so +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            }
           } else if (kieudanh.startsWith("x") && !kieudanh.startsWith("xdao")) {
             ketqua = tinhKetQuaTrungThuongMotKieu(
               "x",
+              madanh,
+              danhsachdai,
+              allResults
+            );
+            if (ketqua.mien === "Miền Bắc") {
+              tongTienTheoKieuMb.xiuChu += parseFloat(ketqua.tong) * heso || 0;
+            } else if (
+              ketqua.mien === "Miền Nam" ||
+              ketqua.mien === "Miền Trung"
+            ) {
+              tongTienTheoKieuMnMt.xiuChu +=
+                parseFloat(ketqua.tong) * heso || 0;
+            }
+          } else if (kieudanh.startsWith("xdao")) {
+            ketqua = tinhKetQuaTrungThuongMotKieu(
+              "xdao",
               madanh,
               danhsachdai,
               allResults
@@ -574,8 +626,9 @@ function App() {
           // console.log(ketqua);
           // console.log(tongTienTheoKieuMnMt.daMotDai);
           if (
-            !kieudanh.startsWith("b") ||
-            (kieudanh.startsWith("b") && dodaimadanh != 4)
+            (!kieudanh.startsWith("b") ||
+            (kieudanh.startsWith("b") && dodaimadanh != 4))
+            && ketqua != null && ketqua != undefined
           ) {
             if (parseFloat(ketqua.tong) > 0) {
               // ketqua.danhsachTrung giả sử là mảng số trúng

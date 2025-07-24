@@ -123,9 +123,7 @@ export function tinhKetQuaTrungThuongMotKieu(
       const count = tatCaSo.filter((trung) => trung.endsWith(so)).length;
       if (count > 0) {
         tong += count * 76;
-        for (let i = 0; i < count; i++) {
-          soTrungArr.push(so);
-        }
+        soTrungArr.push(so + `(${count})`);
       }
     }
   } else if (kieuDanh.startsWith("bao") && soDanhArr[0].length === 3) {
@@ -133,8 +131,29 @@ export function tinhKetQuaTrungThuongMotKieu(
       const count = tatCaSo.filter((trung) => trung.endsWith(so)).length;
       if (count > 0) {
         tong += count * 660;
-        for (let i = 0; i < count; i++) {
-          soTrungArr.push(so);
+        soTrungArr.push(so + `(${count})`);
+      }
+    }
+  } else if (kieuDanh.startsWith("bdao") && soDanhArr[0].length === 2) {
+    for (const so of soDanhArr) {
+      // console.log(generatePermutations(so));
+      for (const soDao of generatePermutations(so)) {
+        const count = tatCaSo.filter((trung) => trung.endsWith(soDao)).length;
+        console.log(`Đang xét: ${soDao}, Số trúng: ${count}`);
+        if (count > 0) {
+          tong += count * 76;
+          soTrungArr.push(soDao + `(${count})`);
+        }
+      }
+    }
+  } else if (kieuDanh.startsWith("bdao") && soDanhArr[0].length === 3) {
+    for (const so of soDanhArr) {
+      // console.log(generatePermutations(so));
+      for (const soDao of generatePermutations(so)) {
+        const count = tatCaSo.filter((trung) => trung.endsWith(soDao)).length;
+        if (count > 0) {
+          tong += count * 660;
+          soTrungArr.push(soDao + `(${count})`);
         }
       }
     }
@@ -183,7 +202,7 @@ export function tinhKetQuaTrungThuongMotKieu(
         }
       }
     }
-  } else if (kieuDanh.startsWith("xdao") || kieuDanh.startsWith("x")) {
+  } else if (kieuDanh.startsWith("x") && !kieuDanh.startsWith("xdao")) {
     for (const so of soDanhArr) {
       const giaiCheck = isBac ? [giaiDB, ...giai6] : [giaiDB, giai7];
       const flatGiai = giaiCheck.flat(); // nếu có mảng lồng
@@ -192,6 +211,20 @@ export function tinhKetQuaTrungThuongMotKieu(
         tong += count * 660;
         for (let i = 0; i < count; i++) {
           soTrungArr.push(so);
+        }
+      }
+    }
+  } else if (kieuDanh.startsWith("xdao")) {
+    for (const so of soDanhArr) {
+      for (const soDao of generatePermutations(so)) {
+        const giaiCheck = isBac ? [giaiDB, ...giai6] : [giaiDB, giai7];
+        const flatGiai = giaiCheck.flat(); // nếu có mảng lồng
+        const count = flatGiai.filter((g) => (g + "").endsWith(soDao)).length;
+        if (count > 0) {
+          tong += count * 660;
+          for (let i = 0; i < count; i++) {
+            soTrungArr.push(soDao + `(${count})`);
+          }
         }
       }
     }
@@ -335,4 +368,31 @@ export function tinhKetQuaTrungThuongMotKieu(
     mien: xacDinhMien(provinces), // tùy logic bạn xác định
     soTrung: soTrungArr, // nếu cần liệt kê
   };
+}
+
+function generatePermutations(num) {
+  const digits = String(num).split(""); // chuyển số thành mảng ký tự
+  const results = new Set(); // dùng Set để tránh trùng
+
+  function backtrack(path, used) {
+    if (path.length === digits.length) {
+      const numberStr = path.join("");
+      if (numberStr[0] !== "0") {
+        results.add(Number(numberStr));
+      }
+      return;
+    }
+
+    for (let i = 0; i < digits.length; i++) {
+      if (used[i]) continue;
+      used[i] = true;
+      path.push(digits[i]);
+      backtrack(path, used);
+      path.pop();
+      used[i] = false;
+    }
+  }
+
+  backtrack([], Array(digits.length).fill(false));
+  return Array.from(results);
 }
