@@ -269,74 +269,126 @@ export function tinhKetQuaTrungThuongMotKieu(
     // console.log("Cặp đài:", capDaiArr);
     // console.log(capSoArr);
 
-    // Bước 3: Duyệt từng cặp đài và từng cặp số
-    capDaiArr.forEach(([d1, d2]) => {
+    if (provinceList.length >= 2) {
+      // Bước 3: Duyệt từng cặp đài và từng cặp số
+      capDaiArr.forEach(([d1, d2]) => {
+        for (let i = 0; i < capSoArr.length; i++) {
+          const capSoChuaXet = [...capSoArr[i]]; // copy mảng gốc
+          for (let i = 0; i < capSoChuaXet.length; i++) {
+            console.log(`Xét cặp đài: ${d1} - ${d2}`);
+            console.log("Cặp số chưa xét:", capSoChuaXet[i]);
+            const cap = capSoChuaXet[i];
+            console.log(cap);
+            if (cap.length < 2) continue;
+            const [s1, s2] = cap;
+            console.log(`Cặp số: ${s1} - ${s2}`);
+
+            const soTrungTheoCapDai = [];
+
+            for (const so of [s1, s2]) {
+              for (const { dai, so: soKQ } of soTheoDai) {
+                if ((dai === d1 || dai === d2) && soKQ.endsWith(so)) {
+                  soTrungTheoCapDai.push({ dai, soKQ });
+                }
+              }
+            }
+            for (const so of soTrungTheoCapDai) {
+              console.log(`Số trúng theo cặp đài: ${so.soKQ} (${so.dai})`);
+            }
+
+            var conSo1;
+            var conSo2;
+            var so1;
+            var so2;
+
+            do {
+              conSo1 = false;
+              conSo2 = false;
+              for (var j = 0; j < soTrungTheoCapDai.length; j++) {
+                if (
+                  soTrungTheoCapDai[j].soKQ.endsWith(s1) &&
+                  conSo1 === false
+                ) {
+                  conSo1 = true;
+                  so1 = soTrungTheoCapDai[j];
+                  soTrungTheoCapDai.splice(j, 1); // loại bỏ số đã trúng
+                  j--; // lùi chỉ số do đã xóa phần tử
+                } else if (
+                  soTrungTheoCapDai[j].soKQ.endsWith(s2) &&
+                  conSo2 === false
+                ) {
+                  conSo2 = true;
+                  so2 = soTrungTheoCapDai[j];
+                  soTrungTheoCapDai.splice(j, 1); // loại bỏ số đã trúng
+                  j--; // lùi chỉ số do đã xóa phần tử
+                }
+              }
+              if (conSo1 && conSo2) {
+                // Nếu cả 2 số đều trúng
+                soTrungArr.push(`${s1} ${s2} (${d1} - ${d2})`);
+                tong += tienDa;
+              }
+            } while (conSo1 && conSo2);
+
+            // Nếu có ít nhất 1 số trúng đài
+            if (soTrungTheoCapDai.length >= 1) {
+              soTrungArr.push(`${s1} ${s2} (${d1} - ${d2})`);
+              tong += tienDa;
+            }
+
+            capSoChuaXet.splice(i, 1); // loại bỏ cặp số đã trúng
+            i--; // lùi chỉ số do đã xóa phần tử
+          }
+        }
+      });
+    } else {
+      const dai = provinces[0];
       for (let i = 0; i < capSoArr.length; i++) {
         const capSoChuaXet = [...capSoArr[i]]; // copy mảng gốc
         for (let i = 0; i < capSoChuaXet.length; i++) {
-          console.log(`Xét cặp đài: ${d1} - ${d2}`);
+          console.log(`Xét đài: ${dai}`);
           console.log("Cặp số chưa xét:", capSoChuaXet[i]);
           const cap = capSoChuaXet[i];
           console.log(cap);
           if (cap.length < 2) continue;
           const [s1, s2] = cap;
           console.log(`Cặp số: ${s1} - ${s2}`);
-
-          const soTrungTheoCapDai = [];
+          const soTrungTheoDai = [];
 
           for (const so of [s1, s2]) {
             for (const { dai, so: soKQ } of soTheoDai) {
-              if ((dai === d1 || dai === d2) && soKQ.endsWith(so)) {
-                soTrungTheoCapDai.push({ dai, soKQ });
+              if (dai === dai && soKQ.endsWith(so)) {
+                soTrungTheoDai.push(so);
               }
             }
           }
-          for (const so of soTrungTheoCapDai) {
-            console.log(`Số trúng theo cặp đài: ${so.soKQ} (${so.dai})`);
-          }
+          
+          const used = new Array(soTrungTheoDai.length).fill(false);
+          let count = 0;
 
-          var conSo1;
-          var conSo2;
-          var so1 = null;
-          var so2 = null;
+          for (let i = 0; i < soTrungTheoDai.length; i++) {
+            if (used[i]) continue;
+            if (soTrungTheoDai[i] !== s1 && soTrungTheoDai[i] !== s2) continue;
 
-          do {
-            conSo1 = false;
-            conSo2 = false;
-            for (var j = 0; j < soTrungTheoCapDai.length; j++) {
-              if (soTrungTheoCapDai[j].soKQ.endsWith(s1) && conSo1 === false) {
-                conSo1 = true;
-                so1 = soTrungTheoCapDai[j];
-                soTrungTheoCapDai.splice(j, 1); // loại bỏ số đã trúng
-                j--; // lùi chỉ số do đã xóa phần tử
-              } else if (
-                soTrungTheoCapDai[j].soKQ.endsWith(s2) &&
-                conSo2 === false
-              ) {
-                conSo2 = true;
-                so2 = soTrungTheoCapDai[j];
-                soTrungTheoCapDai.splice(j, 1); // loại bỏ số đã trúng
-                j--; // lùi chỉ số do đã xóa phần tử
+            for (let j = i + 1; j < soTrungTheoDai.length; j++) {
+              if (used[j]) continue;
+              const pair = [soTrungTheoDai[i], soTrungTheoDai[j]];
+              if (pair.includes(s1) && pair.includes(s2) && soTrungTheoDai[i] !== soTrungTheoDai[j]) {
+                used[i] = true;
+                used[j] = true;
+                count++;
+                break;
               }
             }
-            if (conSo1 && conSo2) {
-              // Nếu cả 2 số đều trúng
-              soTrungArr.push(`${s1} ${s2} (${d1} - ${d2})`);
-              tong += tienDa;
-            }
-          } while (conSo1 && conSo2);
-
-          // Nếu có ít nhất 1 số trúng đài
-          if (soTrungTheoCapDai.length >= 1) {
-            soTrungArr.push(`${s1} ${s2} (${d1} - ${d2})`);
-            tong += tienDa;
           }
 
-          capSoChuaXet.splice(i, 1); // loại bỏ cặp số đã trúng
-          i--; // lùi chỉ số do đã xóa phần tử
+          if (count > 0) { 
+            tong += count * tienDa;
+            soTrungArr.push(`${s1} ${s2} (${count})`);
+          }
         }
       }
-    });
+    }
   }
 
   function xacDinhMien(provinceNames) {
