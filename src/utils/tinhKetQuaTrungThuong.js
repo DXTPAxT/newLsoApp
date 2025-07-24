@@ -139,7 +139,7 @@ export function tinhKetQuaTrungThuongMotKieu(
       // console.log(generatePermutations(so));
       for (const soDao of generatePermutations(so)) {
         const count = tatCaSo.filter((trung) => trung.endsWith(soDao)).length;
-        console.log(`Đang xét: ${soDao}, Số trúng: ${count}`);
+        // console.log(`Đang xét: ${soDao}, Số trúng: ${count}`);
         if (count > 0) {
           tong += count * 76;
           soTrungArr.push(soDao + `(${count})`);
@@ -288,9 +288,11 @@ export function tinhKetQuaTrungThuongMotKieu(
             for (const { dai, so: soKQ } of soTheoDai) {
               if ((dai === d1 || dai === d2) && soKQ.endsWith(so)) {
                 soTrungTheoCapDai.push({ dai, soKQ });
-                break;
               }
             }
+          }
+          for (const so of soTrungTheoCapDai) {
+            console.log(`Số trúng theo cặp đài: ${so.soKQ} (${so.dai})`);
           }
 
           var conSo1;

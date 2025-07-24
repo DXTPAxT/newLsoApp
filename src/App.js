@@ -145,7 +145,7 @@ function App() {
       const tile = document.querySelector(".tile");
       const nhapdontext = document.querySelector(".nhapdontext");
       const danhSachLuotDanh = handleMaDanh(nhapdontext.value);
-      // console.log("Danh sách lượt đánh:", danhSachLuotDanh);
+      console.log("Danh sách lượt đánh:", danhSachLuotDanh);
       var tongtien = handleTinhTong(danhSachLuotDanh);
       for (let i = 0; i < danhSachLuotDanh.length; i++) {
         tongtien += tinhtongtien(
@@ -154,6 +154,11 @@ function App() {
           danhSachLuotDanh[i].cacKieuDanh,
           danhSachLuotDanh[i].sodai
         );
+      }
+      const text = nhapdontext.value;
+      for (let i = 0; i < text.length; i++) {
+        const code = text.charCodeAt(i);
+        console.log(`Ký tự: "${text[i]}" | Mã: ${code}`);
       }
       var tileNhan = tile.value != "" ? tile.value.replace(",", ".") / 100 : 1;
       tongdon.innerHTML = tongtien * tileNhan;
@@ -395,6 +400,7 @@ function App() {
       var tongtien = 0;
 
       for (var i = 0; i < danhSachLuotDanh.length; i++) {
+        // console.log(danhSachLuotDanh[i]);
         tongtien += tinhtongtien(
           danhSachLuotDanh[i].dai,
           danhSachLuotDanh[i].madanh,
@@ -466,7 +472,7 @@ function App() {
                   parseFloat(ketqua.tong) * heso || 0;
               }
             }
-          }  else if (kieudanh.startsWith("bdao")) {
+          } else if (kieudanh.startsWith("bdao")) {
             if (dodaimadanh === 2) {
               ketqua = tinhKetQuaTrungThuongMotKieu(
                 "bdao",
@@ -627,8 +633,9 @@ function App() {
           // console.log(tongTienTheoKieuMnMt.daMotDai);
           if (
             (!kieudanh.startsWith("b") ||
-            (kieudanh.startsWith("b") && dodaimadanh != 4))
-            && ketqua != null && ketqua != undefined
+              (kieudanh.startsWith("b") && dodaimadanh != 4)) &&
+            ketqua != null &&
+            ketqua != undefined
           ) {
             if (parseFloat(ketqua.tong) > 0) {
               // ketqua.danhsachTrung giả sử là mảng số trúng
