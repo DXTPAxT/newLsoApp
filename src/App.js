@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import MienBac from "./components/MienBac";
 import MienTrung from "./components/MienTrung";
 import MienNam from "./components/MienNam";
@@ -9,7 +9,83 @@ import { tachDanhSachTinhThanh } from "./utils/tachDanhSachTinhThanh"; // đổi
 import "./App.css";
 
 function App() {
-  const [selectedDate, setSelectedDate] = useState("today");
+  const [selectedDate, setSelectedDate] = useState("yesterday");
+  const madais = [
+    "Tpho",
+    "Dthap",
+    "Cmau",
+    "Btre",
+    "Vtau",
+    "Blieu",
+    "Dnai",
+    "Ctho",
+    "Strang",
+    "Tninh",
+    "Agiang",
+    "Bthuan",
+    "Vlong",
+    "Bduong",
+    "Tvinh",
+    "Lan",
+    "Bphuoc",
+    "Hgiang",
+    "Tgiang",
+    "Kgiang",
+    "Dlat",
+    "Pyen",
+    "Hue",
+    "Dlak",
+    "Qnam",
+    "Dnang",
+    "Khoa",
+    "Bdinh",
+    "Qtri",
+    "Qbinh",
+    "Glai",
+    "Nthuan",
+    "Qngai",
+    "Dnong",
+    "Ktum",
+    "hn",
+  ];
+  const tendais = [
+    "TP. HCM",
+    "Đồng Tháp",
+    "Cà Mau",
+    "Bến Tre",
+    "Vũng Tàu",
+    "Bạc Liêu",
+    "Đồng Nai",
+    "Cần Thơ",
+    "Sóc Trăng",
+    "Tây Ninh",
+    "An Giang",
+    "Bình Thuận",
+    "Vĩnh Long",
+    "Bình Dương",
+    "Trà Vinh",
+    "Long An",
+    "Bình Phước",
+    "Hậu Giang",
+    "Tiền Giang",
+    "Kiên Giang",
+    "Đà Lạt",
+    "Phú Yên",
+    "Thừa Thiên Huế",
+    "Đắk Lắk",
+    "Quảng Nam",
+    "Đà Nẵng",
+    "Khánh Hòa",
+    "Bình Định",
+    "Quảng Trị",
+    "Quảng Bình",
+    "Gia Lai",
+    "Ninh Thuận",
+    "Quảng Ngãi",
+    "Đắk Nông",
+    "Kon Tum",
+    "Hà Nội",
+  ];
   var counter = 0;
   var max = 10000;
   var allResults = [];
@@ -50,15 +126,43 @@ function App() {
   }, [selectedDate]);
 
   useEffect(() => {
-    const nhapdontext = document.querySelector(".nhapdontext");
     const tinhtong = document.querySelector(".tinhtong");
-    const tongdon = document.querySelector(".tongdon");
-    const tile = document.querySelector(".tile");
     const checkButton = document.querySelector(".checkButton");
-    let dongTrungMap = new Map();
 
-    tinhtong.addEventListener("click", function () {
-      dongTrungMap = new Map();
+    function handleTinhTongClickWrapper() {
+      handleTinhTongClick();
+    }
+
+    function handleCheckClickWrapper() {
+      handleCheckClick();
+    }
+
+    tinhtong.addEventListener("click", handleTinhTongClickWrapper);
+    checkButton.addEventListener("click", handleCheckClickWrapper);
+
+    function handleTinhTongClick() {
+      const tongdon = document.querySelector(".tongdon");
+      const tile = document.querySelector(".tile");
+      const nhapdontext = document.querySelector(".nhapdontext");
+      const danhSachLuotDanh = handleMaDanh(nhapdontext.value);
+      // console.log("Danh sách lượt đánh:", danhSachLuotDanh);
+      var tongtien = handleTinhTong(danhSachLuotDanh);
+      for (let i = 0; i < danhSachLuotDanh.length; i++) {
+        tongtien += tinhtongtien(
+          danhSachLuotDanh[i].dai,
+          danhSachLuotDanh[i].madanh,
+          danhSachLuotDanh[i].cacKieuDanh,
+          danhSachLuotDanh[i].sodai
+        );
+      }
+      var tileNhan = tile.value != "" ? tile.value.replace(",", ".") / 100 : 1;
+      tongdon.innerHTML = tongtien * tileNhan;
+    }
+
+    function handleCheckClick() {
+      const nhapdontext = document.querySelector(".nhapdontext");
+      var danhSachLuotDanh = [];
+      let dongTrungMap = new Map();
       tongTienTheoKieuMb = {
         bao2so: 0,
         bao3so: 0,
@@ -75,349 +179,10 @@ function App() {
         da: 0,
         daMotDai: 0, // Đá 1 chỉ có ở Miền Nam
       };
-      counter = 0;
-      const lines = nhapdontext.value.split("\n");
-      const madais = [
-        "Tpho",
-        "Dthap",
-        "Cmau",
-        "Btre",
-        "Vtau",
-        "Blieu",
-        "Dnai",
-        "Ctho",
-        "Strang",
-        "Tninh",
-        "Agiang",
-        "Bthuan",
-        "Vlong",
-        "Bduong",
-        "Tvinh",
-        "Lan",
-        "Bphuoc",
-        "Hgiang",
-        "Tgiang",
-        "Kgiang",
-        "Dlat",
-        "Pyen",
-        "Hue",
-        "Dlak",
-        "Qnam",
-        "Dnang",
-        "Khoa",
-        "Bdinh",
-        "Qtri",
-        "Qbinh",
-        "Glai",
-        "Nthuan",
-        "Qngai",
-        "Dnong",
-        "Ktum",
-        "hn",
-      ];
-      const tendais = [
-        "TP. HCM",
-        "Đồng Tháp",
-        "Cà Mau",
-        "Bến Tre",
-        "Vũng Tàu",
-        "Bạc Liêu",
-        "Đồng Nai",
-        "Cần Thơ",
-        "Sóc Trăng",
-        "Tây Ninh",
-        "An Giang",
-        "Bình Thuận",
-        "Vĩnh Long",
-        "Bình Dương",
-        "Trà Vinh",
-        "Long An",
-        "Bình Phước",
-        "Hậu Giang",
-        "Tiền Giang",
-        "Kiên Giang",
-        "Đà Lạt",
-        "Phú Yên",
-        "Thừa Thiên Huế",
-        "Đắk Lắk",
-        "Quảng Nam",
-        "Đà Nẵng",
-        "Khánh Hòa",
-        "Bình Định",
-        "Quảng Trị",
-        "Quảng Bình",
-        "Gia Lai",
-        "Ninh Thuận",
-        "Quảng Ngãi",
-        "Đắk Nông",
-        "Kon Tum",
-        "Hà Nội",
-      ];
-      var sodai = 0;
-      var dai = "";
-      var luotdanh;
-      var tongtien = 0;
+      danhSachLuotDanh = handleMaDanh(nhapdontext.value);
 
-      for (var i = 0; i < lines.length; i++) {
-        // gắn đài
-        if (i == 0 || (sodai == 0 && lines[i] != "")) {
-          dai = lines[i];
-          if (!isNaN(dai[0])) {
-            sodai = dai[0];
-          } else if (dai.toLowerCase() == "hn") {
-            dai = "hn";
-            sodai = 1;
-          } else if (dai.toLowerCase() != "hn") {
-            dai = dai.toLowerCase();
-            madais.forEach((madai) => {
-              if (dai.includes(madai.toLowerCase())) {
-                sodai++;
-                dai = dai.replace(madai.toLowerCase(), "");
-              }
-            });
-            madais.forEach((madai) => {
-              if (dai.includes(madai.toLowerCase())) {
-                sodai++;
-                dai = dai.replace(madai.toLowerCase(), "");
-              }
-            });
-            dai = lines[i].toLowerCase();
-          }
-          // hàng trống
-        } else if (sodai != 0 && lines[i] == "") {
-          sodai = 0;
-          // cộng từng lượt đánh
-        } else if (sodai != 0 && lines[i] != "") {
-          luotdanh = lines[i];
+      handleCheck(dongTrungMap, danhSachLuotDanh);
 
-          const pattern = /(da\d+(?:,\d+)?x)|(bdao|xdao|bao|duoi|dui|dau|dd|da|b|x)\d+(?:,\d+)?/gi;
-          const match = luotdanh.match(pattern);
-
-          let madanh = "";
-          let luotdanhPhanConLai = "";
-
-          if (match) {
-            const index = luotdanh.indexOf(match[0]);
-            madanh = luotdanh.substring(0, index);
-            luotdanhPhanConLai = luotdanh.substring(index);
-          } else {
-            madanh = luotdanh;
-          }
-
-          // Xử lý trường hợp "keo" với start–end bất kỳ
-          if (madanh.includes("keo")) {
-            madanh = expandKeo(madanh);
-          }
-
-          // Tách các kiểu đánh còn lại (lại dùng regex mới)
-          const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
-
-          // thông báo treo máy
-          if (counter == max) {
-            alert("Bị lỗi, hãy thử lại.");
-          }
-
-          // console.log(cacKieuDanh);
-          // console.log(dai);
-          // console.log(madanh);
-          tongtien += tinhtongtien(dai, madanh, cacKieuDanh, sodai);
-          // console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
-          // console.log(tongtien);
-          // console.log(`==============`);
-
-          // tính kết quả trúng thưởng
-          var dodaimadanh = madanh.split(".")[0].length;
-          for (var kieudanh of cacKieuDanh) {
-            var matchHeSo = kieudanh.match(/\d+([.,]\d+)?/);
-            var heso = matchHeSo
-              ? parseFloat(matchHeSo[0].replace(",", "."))
-              : 1;
-            var danhsachdai = tachDanhSachTinhThanh(
-              dai,
-              madais,
-              tendais,
-              selectedDate
-            );
-            var ketqua;
-
-            // console.log("");
-            // console.log(danhsachdai);
-            // console.log(madanh);
-            // console.log(kieudanh);
-            // console.log(heso);
-
-            if (kieudanh.startsWith("b")) {
-              if (dodaimadanh === 2) {
-                ketqua = tinhKetQuaTrungThuongMotKieu(
-                  "bao",
-                  madanh,
-                  danhsachdai,
-                  allResults
-                );
-                if (ketqua.mien === "Miền Bắc") {
-                  tongTienTheoKieuMb.bao2so +=
-                    parseFloat(ketqua.tong) * heso || 0;
-                } else if (
-                  ketqua.mien === "Miền Nam" ||
-                  ketqua.mien === "Miền Trung"
-                ) {
-                  tongTienTheoKieuMnMt.bao2so +=
-                    parseFloat(ketqua.tong) * heso || 0;
-                }
-              } else if (dodaimadanh === 3) {
-                ketqua = tinhKetQuaTrungThuongMotKieu(
-                  "bao",
-                  madanh,
-                  danhsachdai,
-                  allResults
-                );
-                if (ketqua.mien === "Miền Bắc") {
-                  tongTienTheoKieuMb.bao3so +=
-                    parseFloat(ketqua.tong) * heso || 0;
-                } else if (
-                  ketqua.mien === "Miền Nam" ||
-                  ketqua.mien === "Miền Trung"
-                ) {
-                  tongTienTheoKieuMnMt.bao3so +=
-                    parseFloat(ketqua.tong) * heso || 0;
-                }
-              }
-            } else if (
-              kieudanh.startsWith("x") &&
-              !kieudanh.startsWith("xdao")
-            ) {
-              ketqua = tinhKetQuaTrungThuongMotKieu(
-                "x",
-                madanh,
-                danhsachdai,
-                allResults
-              );
-              if (ketqua.mien === "Miền Bắc") {
-                tongTienTheoKieuMb.xiuChu +=
-                  parseFloat(ketqua.tong) * heso || 0;
-              } else if (
-                ketqua.mien === "Miền Nam" ||
-                ketqua.mien === "Miền Trung"
-              ) {
-                tongTienTheoKieuMnMt.xiuChu +=
-                  parseFloat(ketqua.tong) * heso || 0;
-              }
-            } else if (kieudanh.startsWith("dd")) {
-              ketqua = tinhKetQuaTrungThuongMotKieu(
-                kieudanh,
-                madanh,
-                danhsachdai,
-                allResults
-              );
-              if (ketqua.mien === "Miền Bắc") {
-                tongTienTheoKieuMb.dauDuoi +=
-                  parseFloat(ketqua.tong) * heso || 0;
-              } else if (
-                ketqua.mien === "Miền Nam" ||
-                ketqua.mien === "Miền Trung"
-              ) {
-                tongTienTheoKieuMnMt.dauDuoi +=
-                  parseFloat(ketqua.tong) * heso || 0;
-                // console.log(tongTienTheoKieuMnMt.dauDuoi);
-              }
-            } else if (kieudanh.startsWith("dau")) {
-              ketqua = tinhKetQuaTrungThuongMotKieu(
-                kieudanh,
-                madanh,
-                danhsachdai,
-                allResults
-              );
-              if (ketqua.mien === "Miền Bắc") {
-                tongTienTheoKieuMb.dauDuoi +=
-                  parseFloat(ketqua.tong) * heso || 0;
-              } else if (
-                ketqua.mien === "Miền Nam" ||
-                ketqua.mien === "Miền Trung"
-              ) {
-                tongTienTheoKieuMnMt.dauDuoi +=
-                  parseFloat(ketqua.tong) * heso || 0;
-              }
-            } else if (
-              kieudanh.startsWith("duoi") ||
-              kieudanh.startsWith("dui")
-            ) {
-              ketqua = tinhKetQuaTrungThuongMotKieu(
-                kieudanh,
-                madanh,
-                danhsachdai,
-                allResults
-              );
-              // console.log(ketqua);
-              if (ketqua.mien === "Miền Bắc") {
-                tongTienTheoKieuMb.dauDuoi +=
-                  parseFloat(ketqua.tong) * heso || 0;
-              } else if (
-                ketqua.mien === "Miền Nam" ||
-                ketqua.mien === "Miền Trung"
-              ) {
-                tongTienTheoKieuMnMt.dauDuoi +=
-                  parseFloat(ketqua.tong) * heso || 0;
-              }
-            } else if (kieudanh.startsWith("da") && danhsachdai.length != 1) {
-              ketqua = tinhKetQuaTrungThuongMotKieu(
-                "da" + dodaimadanh / 2,
-                madanh,
-                danhsachdai,
-                allResults
-              );
-              if (ketqua.mien === "Miền Bắc") {
-                tongTienTheoKieuMb.da += parseFloat(ketqua.tong) * heso || 0;
-              } else if (
-                ketqua.mien === "Miền Nam" ||
-                ketqua.mien === "Miền Trung"
-              ) {
-                // console.log(danhsachdai.length);
-                tongTienTheoKieuMnMt.da += parseFloat(ketqua.tong) * heso || 0;
-              }
-            } else if (kieudanh.startsWith("da") && danhsachdai.length === 1) {
-              ketqua = tinhKetQuaTrungThuongMotKieu(
-                "da" + dodaimadanh / 2,
-                madanh,
-                danhsachdai,
-                allResults
-              );
-              if (ketqua.mien === "Miền Bắc") {
-                tongTienTheoKieuMb.da += parseFloat(ketqua.tong) * heso || 0;
-              } else if (
-                ketqua.mien === "Miền Nam" ||
-                ketqua.mien === "Miền Trung"
-              ) {
-                // console.log(danhsachdai.length);
-                if (danhsachdai.length === 1) {
-                  tongTienTheoKieuMnMt.daMotDai +=
-                    parseFloat(ketqua.tong) * heso || 0;
-                }
-              }
-            }
-            // console.log(ketqua);
-            // console.log(tongTienTheoKieuMnMt.daMotDai);
-            if (
-              !kieudanh.startsWith("b") ||
-              (kieudanh.startsWith("b") && dodaimadanh != 4)
-            ) {
-              if (parseFloat(ketqua.tong) > 0) {
-                // ketqua.danhsachTrung giả sử là mảng số trúng
-                if (dongTrungMap.has(i)) {
-                  dongTrungMap.get(i).push(...(ketqua.soTrung || []));
-                } else {
-                  dongTrungMap.set(i, [...(ketqua.soTrung || [])]);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      var tileNhan = tile.value != "" ? tile.value.replace(",", ".") / 100 : 1;
-      tongdon.innerHTML = tongtien * tileNhan;
-    });
-
-    checkButton.addEventListener("click", function () {
       const container = document.querySelector(".danhsachtrungso");
       const formatTien = (v) => Number(v || 0).toLocaleString("vi-VN");
 
@@ -535,7 +300,304 @@ function App() {
 
       // Hiển thị dòng tô đỏ
       ketquaView.innerHTML = `<h3>Chi tiết đơn đã đánh (đỏ là trúng)</h3><pre>${newHtml}</pre>`;
-    });
+    }
+
+    function handleMaDanh(donDanh) {
+      // console.log("Đơn đánh:", donDanh);
+
+      const danhSachLuotDanh = [];
+
+      const lines = donDanh.split("\n");
+      var sodai = 0;
+      var dai = "";
+      var luotdanh;
+
+      for (var i = 0; i < lines.length; i++) {
+        // gắn đài
+        if (i == 0 || (sodai == 0 && lines[i] != "")) {
+          dai = lines[i];
+          if (!isNaN(dai[0])) {
+            sodai = dai[0];
+          } else if (dai.toLowerCase() == "hn") {
+            dai = "hn";
+            sodai = 1;
+          } else if (dai.toLowerCase() != "hn") {
+            dai = dai.toLowerCase();
+            madais.forEach((madai) => {
+              if (dai.includes(madai.toLowerCase())) {
+                sodai++;
+                dai = dai.replace(madai.toLowerCase(), "");
+              }
+            });
+            madais.forEach((madai) => {
+              if (dai.includes(madai.toLowerCase())) {
+                sodai++;
+                dai = dai.replace(madai.toLowerCase(), "");
+              }
+            });
+            dai = lines[i].toLowerCase();
+          }
+          // hàng trống
+        } else if (sodai != 0 && lines[i] == "") {
+          sodai = 0;
+          // cộng từng lượt đánh
+        } else if (sodai != 0 && lines[i] != "") {
+          luotdanh = lines[i];
+
+          const pattern =
+            /(da\d+(?:,\d+)?x)|(bdao|xdao|bao|duoi|dui|dau|dd|da|b|x)\d+(?:,\d+)?/gi;
+          const match = luotdanh.match(pattern);
+
+          let madanh = "";
+          let luotdanhPhanConLai = "";
+
+          if (match) {
+            const index = luotdanh.indexOf(match[0]);
+            madanh = luotdanh.substring(0, index);
+            luotdanhPhanConLai = luotdanh.substring(index);
+          } else {
+            madanh = luotdanh;
+          }
+
+          // Xử lý trường hợp "keo" với start–end bất kỳ
+          if (madanh.includes("keo")) {
+            madanh = expandKeo(madanh);
+          }
+
+          // Tách các kiểu đánh còn lại (lại dùng regex mới)
+          const cacKieuDanh = luotdanhPhanConLai.match(pattern) || [];
+
+          // thông báo treo máy
+          if (counter == max) {
+            alert("Bị lỗi, hãy thử lại.");
+          }
+
+          // console.log(cacKieuDanh);
+          // console.log(dai);
+          // console.log(madanh);
+          danhSachLuotDanh.push({ dai, madanh, cacKieuDanh, sodai, i });
+          // tongtien += tinhtongtien(dai, madanh, cacKieuDanh, sodai);
+          // console.log(tinhtongtien(dai, madanh, cacKieuDanh, sodai));
+          // console.log(tongtien);
+          // console.log(`==============`);
+
+          // tính kết quả trúng thưởng
+        }
+      }
+
+      // console.log("Danh sách lượt đánh:", danhSachLuotDanh);
+
+      return danhSachLuotDanh;
+    }
+
+    function handleTinhTong(danhSachLuotDanh) {
+      var danhSachLuotDanh = [];
+      var tongtien = 0;
+
+      for (var i = 0; i < danhSachLuotDanh.length; i++) {
+        tongtien += tinhtongtien(
+          danhSachLuotDanh[i].dai,
+          danhSachLuotDanh[i].madanh,
+          danhSachLuotDanh[i].cacKieuDanh,
+          danhSachLuotDanh[i].sodai
+        );
+      }
+
+      return tongtien;
+    }
+
+    function handleCheck(dongTrungMap, danhSachLuotDanh) {
+      for (var j = 0; j < danhSachLuotDanh.length; j++) {
+        const madanh = danhSachLuotDanh[j].madanh;
+        const cacKieuDanh = danhSachLuotDanh[j].cacKieuDanh;
+        const dai = danhSachLuotDanh[j].dai;
+        var dodaimadanh = madanh.split(".")[0].length;
+        for (var kieudanh of cacKieuDanh) {
+          var matchHeSo = kieudanh.match(/\d+([.,]\d+)?/);
+          var heso = matchHeSo ? parseFloat(matchHeSo[0].replace(",", ".")) : 1;
+          var danhsachdai = tachDanhSachTinhThanh(
+            dai,
+            madais,
+            tendais,
+            selectedDate
+          );
+          var ketqua;
+
+          console.log(selectedDate);
+          // console.log("");
+          // console.log(danhsachdai);
+          // console.log(madanh);
+          // console.log(kieudanh);
+          // console.log(heso);
+
+          if (kieudanh.startsWith("b")) {
+            if (dodaimadanh === 2) {
+              ketqua = tinhKetQuaTrungThuongMotKieu(
+                "bao",
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.bao2so +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.bao2so +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            } else if (dodaimadanh === 3) {
+              ketqua = tinhKetQuaTrungThuongMotKieu(
+                "bao",
+                madanh,
+                danhsachdai,
+                allResults
+              );
+              if (ketqua.mien === "Miền Bắc") {
+                tongTienTheoKieuMb.bao3so +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              } else if (
+                ketqua.mien === "Miền Nam" ||
+                ketqua.mien === "Miền Trung"
+              ) {
+                tongTienTheoKieuMnMt.bao3so +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            }
+          } else if (kieudanh.startsWith("x") && !kieudanh.startsWith("xdao")) {
+            ketqua = tinhKetQuaTrungThuongMotKieu(
+              "x",
+              madanh,
+              danhsachdai,
+              allResults
+            );
+            if (ketqua.mien === "Miền Bắc") {
+              tongTienTheoKieuMb.xiuChu += parseFloat(ketqua.tong) * heso || 0;
+            } else if (
+              ketqua.mien === "Miền Nam" ||
+              ketqua.mien === "Miền Trung"
+            ) {
+              tongTienTheoKieuMnMt.xiuChu +=
+                parseFloat(ketqua.tong) * heso || 0;
+            }
+          } else if (kieudanh.startsWith("dd")) {
+            ketqua = tinhKetQuaTrungThuongMotKieu(
+              kieudanh,
+              madanh,
+              danhsachdai,
+              allResults
+            );
+            if (ketqua.mien === "Miền Bắc") {
+              tongTienTheoKieuMb.dauDuoi += parseFloat(ketqua.tong) * heso || 0;
+            } else if (
+              ketqua.mien === "Miền Nam" ||
+              ketqua.mien === "Miền Trung"
+            ) {
+              tongTienTheoKieuMnMt.dauDuoi +=
+                parseFloat(ketqua.tong) * heso || 0;
+              // console.log(tongTienTheoKieuMnMt.dauDuoi);
+            }
+          } else if (kieudanh.startsWith("dau")) {
+            ketqua = tinhKetQuaTrungThuongMotKieu(
+              kieudanh,
+              madanh,
+              danhsachdai,
+              allResults
+            );
+            if (ketqua.mien === "Miền Bắc") {
+              tongTienTheoKieuMb.dauDuoi += parseFloat(ketqua.tong) * heso || 0;
+            } else if (
+              ketqua.mien === "Miền Nam" ||
+              ketqua.mien === "Miền Trung"
+            ) {
+              tongTienTheoKieuMnMt.dauDuoi +=
+                parseFloat(ketqua.tong) * heso || 0;
+            }
+          } else if (
+            kieudanh.startsWith("duoi") ||
+            kieudanh.startsWith("dui")
+          ) {
+            ketqua = tinhKetQuaTrungThuongMotKieu(
+              kieudanh,
+              madanh,
+              danhsachdai,
+              allResults
+            );
+            // console.log(ketqua);
+            if (ketqua.mien === "Miền Bắc") {
+              tongTienTheoKieuMb.dauDuoi += parseFloat(ketqua.tong) * heso || 0;
+            } else if (
+              ketqua.mien === "Miền Nam" ||
+              ketqua.mien === "Miền Trung"
+            ) {
+              tongTienTheoKieuMnMt.dauDuoi +=
+                parseFloat(ketqua.tong) * heso || 0;
+            }
+          } else if (kieudanh.startsWith("da") && danhsachdai.length != 1) {
+            ketqua = tinhKetQuaTrungThuongMotKieu(
+              "da" + dodaimadanh / 2,
+              madanh,
+              danhsachdai,
+              allResults
+            );
+            if (ketqua.mien === "Miền Bắc") {
+              tongTienTheoKieuMb.da += parseFloat(ketqua.tong) * heso || 0;
+            } else if (
+              ketqua.mien === "Miền Nam" ||
+              ketqua.mien === "Miền Trung"
+            ) {
+              // console.log(danhsachdai.length);
+              tongTienTheoKieuMnMt.da += parseFloat(ketqua.tong) * heso || 0;
+            }
+          } else if (kieudanh.startsWith("da") && danhsachdai.length === 1) {
+            ketqua = tinhKetQuaTrungThuongMotKieu(
+              "da" + dodaimadanh / 2,
+              madanh,
+              danhsachdai,
+              allResults
+            );
+            if (ketqua.mien === "Miền Bắc") {
+              tongTienTheoKieuMb.da += parseFloat(ketqua.tong) * heso || 0;
+            } else if (
+              ketqua.mien === "Miền Nam" ||
+              ketqua.mien === "Miền Trung"
+            ) {
+              // console.log(danhsachdai.length);
+              if (danhsachdai.length === 1) {
+                tongTienTheoKieuMnMt.daMotDai +=
+                  parseFloat(ketqua.tong) * heso || 0;
+              }
+            }
+          }
+          // console.log(ketqua);
+          // console.log(tongTienTheoKieuMnMt.daMotDai);
+          if (
+            !kieudanh.startsWith("b") ||
+            (kieudanh.startsWith("b") && dodaimadanh != 4)
+          ) {
+            if (parseFloat(ketqua.tong) > 0) {
+              // ketqua.danhsachTrung giả sử là mảng số trúng
+              if (dongTrungMap.has(danhSachLuotDanh[j].i)) {
+                dongTrungMap
+                  .get(danhSachLuotDanh[j].i)
+                  .push(...(ketqua.soTrung || []));
+              } else {
+                dongTrungMap.set(danhSachLuotDanh[j].i, [
+                  ...(ketqua.soTrung || []),
+                ]);
+              }
+            }
+          }
+        }
+      }
+    }
+    // Cleanup để tránh tạo nhiều listener
+    return () => {
+      tinhtong.removeEventListener("click", handleTinhTongClickWrapper);
+      checkButton.removeEventListener("click", handleCheckClickWrapper);
+    };
   }, [selectedDate]);
 
   const handleChange = (e) => {

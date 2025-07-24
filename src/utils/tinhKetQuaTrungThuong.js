@@ -196,85 +196,112 @@ export function tinhKetQuaTrungThuongMotKieu(
       }
     }
   } else if (kieuDanh.startsWith("da")) {
-    let round = parseInt(kieuDanh.replace("da", ""));
-    if (isNaN(round)) round = 2;
+    const round = parseInt(kieuDanh.replace("da", "")) || 2;
+    const tienDa =
+      provinces.length === 1
+        ? mien === "Miền Bắc"
+          ? 660
+          : 750
+        : mien === "Miền Bắc"
+        ? 660
+        : 560;
 
-    const soDai = provinces.length;
-    let tienDa = 0;
-    if (soDai === 1) {
-      tienDa = mien === "Miền Bắc" ? 660 : 750;
-    } else {
-      tienDa = mien === "Miền Bắc" ? 660 : 560;
+    // Bước 1: Tạo các cặp đài
+    const capDaiArr = [];
+    for (let i = 0; i < provinces.length; i++) {
+      for (let j = i + 1; j < provinces.length; j++) {
+        capDaiArr.push([provinces[i], provinces[j]]);
+      }
     }
 
-    const soTrungRaw = [];
-
-    maDanh.split(".").forEach((str) => {
-      const soDanhArr = [];
+    // Bước 2: Tách maDanh thành mảng cặp số
+    const capSoArr = maDanh.split(".").map((str) => {
+      const numbers = [];
       for (let i = 0; i + 1 < str.length; i += 2) {
-        soDanhArr.push(str.substring(i, i + 2));
+        numbers.push(str.substring(i, i + 2));
       }
 
-      const soCanLay = Math.min(round, soDanhArr.length);
-      const soDaXet = soDanhArr.slice(0, soCanLay);
+      const pairs = [];
+      for (let i = 0; i < numbers.length; i++) {
+        for (let j = i + 1; j < numbers.length; j++) {
+          pairs.push([numbers[i], numbers[j]]);
+        }
+      }
 
-      soDaXet.forEach((so) => {
-        soTheoDai.forEach(({ dai, so: soKQ }) => {
-          if (soKQ.endsWith(so)) {
-            soTrungRaw.push({ so, dai });
-          }
-        });
-      });
+      return pairs;
     });
 
-    const soTrungDaDung = new Array(soTrungRaw.length).fill(false);
-    const toHopDai = [];
+    // console.log("Đài truyền vào:", provinceList);
+    // console.log("Đài:", provinces);
+    // console.log("Cặp đài:", capDaiArr);
+    // console.log(capSoArr);
 
-    const daiList = [...new Set(provinces)];
-    for (let i = 0; i < daiList.length; i++) {
-      for (let j = i + 1; j < daiList.length; j++) {
-        toHopDai.push([daiList[i], daiList[j]]);
-      }
-    }
+    // Bước 3: Duyệt từng cặp đài và từng cặp số
+    capDaiArr.forEach(([d1, d2]) => {
+      for (let i = 0; i < capSoArr.length; i++) {
+        const capSoChuaXet = [...capSoArr[i]]; // copy mảng gốc
+        for (let i = 0; i < capSoChuaXet.length; i++) {
+          console.log(`Xét cặp đài: ${d1} - ${d2}`);
+          console.log("Cặp số chưa xét:", capSoChuaXet[i]);
+          const cap = capSoChuaXet[i];
+          console.log(cap);
+          if (cap.length < 2) continue;
+          const [s1, s2] = cap;
+          console.log(`Cặp số: ${s1} - ${s2}`);
 
-    for (let i = 0; i < soTrungRaw.length; i++) {
-      if (soTrungDaDung[i]) continue;
-      const a = soTrungRaw[i];
+          const soTrungTheoCapDai = [];
 
-      for (let j = i + 1; j < soTrungRaw.length; j++) {
-        if (soTrungDaDung[j]) continue;
-        const b = soTrungRaw[j];
-
-        if (a.so === b.so) continue;
-
-        if (a.dai === b.dai) {
-          // Cùng đài
-          if (soDai === 1) {
-            // Chỉ 1 đài: chỉ push số, không tên đài
-            tong += tienDa;
-            soTrungArr.push(`${a.so} ${b.so}`);
-          } else {
-            // Nhiều đài: push nhiều lần theo tổ hợp đài liên quan
-            toHopDai.forEach(([d1, d2]) => {
-              if (d1 === a.dai || d2 === a.dai) {
-                tong += tienDa;
-                soTrungArr.push(`${a.so} ${b.so} (${d1} - ${d2})`);
+          for (const so of [s1, s2]) {
+            for (const { dai, so: soKQ } of soTheoDai) {
+              if ((dai === d1 || dai === d2) && soKQ.endsWith(so)) {
+                soTrungTheoCapDai.push({ dai, soKQ });
+                break;
               }
-            });
+            }
           }
-        } else {
-          // Khác đài: push 1 lần
-          const dMin = a.dai < b.dai ? a.dai : b.dai;
-          const dMax = a.dai > b.dai ? a.dai : b.dai;
-          tong += tienDa;
-          soTrungArr.push(`${a.so} ${b.so} (${dMin} - ${dMax})`);
-        }
 
-        soTrungDaDung[i] = true;
-        soTrungDaDung[j] = true;
-        break;
+          var conSo1;
+          var conSo2;
+          var so1 = null;
+          var so2 = null;
+
+          do {
+            conSo1 = false;
+            conSo2 = false;
+            for (var j = 0; j < soTrungTheoCapDai.length; j++) {
+              if (soTrungTheoCapDai[j].soKQ.endsWith(s1) && conSo1 === false) {
+                conSo1 = true;
+                so1 = soTrungTheoCapDai[j];
+                soTrungTheoCapDai.splice(j, 1); // loại bỏ số đã trúng
+                j--; // lùi chỉ số do đã xóa phần tử
+              } else if (
+                soTrungTheoCapDai[j].soKQ.endsWith(s2) &&
+                conSo2 === false
+              ) {
+                conSo2 = true;
+                so2 = soTrungTheoCapDai[j];
+                soTrungTheoCapDai.splice(j, 1); // loại bỏ số đã trúng
+                j--; // lùi chỉ số do đã xóa phần tử
+              }
+            }
+            if (conSo1 && conSo2) {
+              // Nếu cả 2 số đều trúng
+              soTrungArr.push(`${s1} ${s2} (${d1} - ${d2})`);
+              tong += tienDa;
+            }
+          } while (conSo1 && conSo2);
+
+          // Nếu có ít nhất 1 số trúng đài
+          if (soTrungTheoCapDai.length >= 1) {
+            soTrungArr.push(`${s1} ${s2} (${d1} - ${d2})`);
+            tong += tienDa;
+          }
+
+          capSoChuaXet.splice(i, 1); // loại bỏ cặp số đã trúng
+          i--; // lùi chỉ số do đã xóa phần tử
+        }
       }
-    }
+    });
   }
 
   function xacDinhMien(provinceNames) {
