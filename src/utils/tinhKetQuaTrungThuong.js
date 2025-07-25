@@ -324,17 +324,10 @@ export function tinhKetQuaTrungThuongMotKieu(
                 }
               }
               if (conSo1 && conSo2) {
-                // Nếu cả 2 số đều trúng
                 soTrungArr.push(`${s1} ${s2} (${d1} - ${d2})`);
                 tong += tienDa;
               }
             } while (conSo1 && conSo2);
-
-            // Nếu có ít nhất 1 số trúng đài
-            if (soTrungTheoCapDai.length >= 1) {
-              soTrungArr.push(`${s1} ${s2} (${d1} - ${d2})`);
-              tong += tienDa;
-            }
 
             capSoChuaXet.splice(i, 1); // loại bỏ cặp số đã trúng
             i--; // lùi chỉ số do đã xóa phần tử
