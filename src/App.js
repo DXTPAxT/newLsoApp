@@ -6,6 +6,7 @@ import { tinhtongtien } from "./utils/tinhTongTien";
 import { loadAllXosoResults } from "./utils/loadXosoData"; // đổi path nếu khác
 import { tinhKetQuaTrungThuongMotKieu } from "./utils/tinhKetQuaTrungThuong"; // đổi path nếu khác
 import { tachDanhSachTinhThanh } from "./utils/tachDanhSachTinhThanh"; // đổi path nếu khác
+import { pt } from "./utils/pt"; // đổi path nếu khác
 import "./App.css";
 
 function App() {
@@ -145,7 +146,13 @@ function App() {
       const tile = document.querySelector(".tile");
       const nhapdontext = document.querySelector(".nhapdontext");
       const danhSachLuotDanh = handleMaDanh(nhapdontext.value);
+      const abc = pt(nhapdontext.value);
       console.log("Danh sách lượt đánh:", danhSachLuotDanh);
+      var tl = 1;
+      tl =
+        abc != null
+          ? (100 - abc[0] * 2 - abc[1] * 3 - abc[2] * 5 - abc[3] * 6) / 100
+          : tl;
       var tongtien = handleTinhTong(danhSachLuotDanh);
       for (let i = 0; i < danhSachLuotDanh.length; i++) {
         tongtien += tinhtongtien(
@@ -155,13 +162,8 @@ function App() {
           danhSachLuotDanh[i].sodai
         );
       }
-      const text = nhapdontext.value;
-      for (let i = 0; i < text.length; i++) {
-        const code = text.charCodeAt(i);
-        console.log(`Ký tự: "${text[i]}" | Mã: ${code}`);
-      }
       var tileNhan = tile.value != "" ? tile.value.replace(",", ".") / 100 : 1;
-      tongdon.innerHTML = tongtien * tileNhan;
+      tongdon.innerHTML = tl != 1 ? Math.ceil(tongtien * tileNhan * tl) : tongtien * tileNhan;
     }
 
     function handleCheckClick() {
