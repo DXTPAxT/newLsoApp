@@ -609,7 +609,11 @@ function App() {
               // console.log(danhsachdai.length);
               tongTienTheoKieuMnMt.da += parseFloat(ketqua.tong) * heso || 0;
             }
-          } else if (kieudanh.startsWith("da") && danhsachdai.length === 1 && !kieudanh.includes("x")) {
+          } else if (
+            kieudanh.startsWith("da") &&
+            danhsachdai.length === 1 &&
+            !kieudanh.includes("x")
+          ) {
             ketqua = tinhKetQuaTrungThuongMotKieu(
               "da" + dodaimadanh / 2,
               madanh,
@@ -628,7 +632,11 @@ function App() {
                   parseFloat(ketqua.tong) * heso || 0;
               }
             }
-          } else if (kieudanh.startsWith("da") && danhsachdai.length === 1 && kieudanh.includes("x")) {
+          } else if (
+            kieudanh.startsWith("da") &&
+            danhsachdai.length === 1 &&
+            kieudanh.includes("x")
+          ) {
             ketqua = tinhKetQuaTrungThuongMotKieu(
               "dax" + dodaimadanh / 2,
               madanh,

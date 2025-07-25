@@ -266,8 +266,8 @@ export function tinhKetQuaTrungThuongMotKieu(
 
     // console.log("Đài truyền vào:", provinceList);
     // console.log("Đài:", provinces);
-    // console.log("Cặp đài:", capDaiArr);
-    // console.log(capSoArr);
+    console.log("Cặp đài:", capDaiArr);
+    console.log(capSoArr);
 
     if (provinceList.length >= 2) {
       // Bước 3: Duyệt từng cặp đài và từng cặp số
@@ -278,7 +278,7 @@ export function tinhKetQuaTrungThuongMotKieu(
             console.log(`Xét cặp đài: ${d1} - ${d2}`);
             console.log("Cặp số chưa xét:", capSoChuaXet[i]);
             const cap = capSoChuaXet[i];
-            console.log(cap);
+            // console.log(cap);
             if (cap.length < 2) continue;
             const [s1, s2] = cap;
             console.log(`Cặp số: ${s1} - ${s2}`);
